@@ -169,7 +169,7 @@ async function generateBoxScoreDay(date) {
 
 function dateCode(date) {
   let curDate = new Date();
-  let maxDate = curDate.getUTCFullYear() + "-" + curDate.getUTCMonth() + "-" + curDate.getUTCDate();
+  let maxDate = curDate.getUTCFullYear() + "-" + (curDate.getUTCMonth() + 1) + "-" + curDate.getUTCDate();
   let node = document.getElementById('boxscore');
   let dateCode = "<form action=javascript:handleDateSelect()>";
   dateCode += "<input type='date' id='dateSelect' name='dateSelect' value=" + date +" max=" + maxDate + ">"
@@ -179,7 +179,7 @@ function dateCode(date) {
 
 async function main() {
   let curDate = new Date();
-  let date = curDate.getUTCFullYear() + "-" + curDate.getUTCMonth() + "-" + curDate.getUTCDate();
+  let date = curDate.getUTCFullYear() + "-" + (curDate.getUTCMonth() + 1) + "-" + curDate.getUTCDate();
   await generateBoxScoreDay(date);
 }
 main();
