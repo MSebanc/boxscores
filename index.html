@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Box Scores</title>
+</head>
+<body>
+
+<script type="text/javascript" src="./js/app.js">
+</script>
+
+<script type="text/javascript">
+  async function handleDateSelect() {
+    await generateBoxScoreDay(document.querySelector('input[type="date"]').value);
+  }
+</script>
+
+<p id="boxscore"></p>
+
+
+</body>
+</html>
