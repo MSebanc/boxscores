@@ -156,7 +156,7 @@ async function generateBoxScoreDay(date) {
   let res = await getSchedule(date);
   let data = await res.json();
   let node = document.getElementById('boxscore');
-  dateCode();
+  dateCode(date);
   node.innerHTML += "<h1>" + date + "</h1>"
   if (data["dates"].length === 0) {
     node.innerHTML += "<h2>No Games Today</h2>"
@@ -167,12 +167,12 @@ async function generateBoxScoreDay(date) {
   }
 }
 
-function dateCode() {
+function dateCode(date) {
   let curDate = new Date();
-  let date = curDate.getUTCFullYear() + "-" + curDate.getUTCMonth() + "-" + curDate.getUTCDate();
+  let maxDate = curDate.getUTCFullYear() + "-" + curDate.getUTCMonth() + "-" + curDate.getUTCDate();
   let node = document.getElementById('boxscore');
   let dateCode = "<form action=javascript:handleDateSelect()>";
-  dateCode += "<input type='date' id='dateSelect' name='dateSelect' value=" + date +" max=" + date + ">"
+  dateCode += "<input type='date' id='dateSelect' name='dateSelect' value=" + date +" max=" + maxDate + ">"
   dateCode += "<button>Submit</button></form>"
   node.innerHTML = dateCode;
 }
