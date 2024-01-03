@@ -167,19 +167,30 @@ async function generateBoxScoreDay(date) {
   }
 }
 
-function dateCode(date) {
+function getDateToday() {
   let curDate = new Date();
-  let maxDate = curDate.getUTCFullYear() + "-" + (curDate.getUTCMonth() + 1) + "-" + curDate.getUTCDate();
+  let month = curDate.getMonth() + 1;
+  if (month < 10) {
+    month = "0" + month.toString();
+  }
+  let day = curDate.getDate();
+  if (day < 10) {
+    day = "0" + day.toString();
+  }
+  return curDate.getFullYear() + "-" + month + "-" + day;
+}
+
+function dateCode(date) {
+  let maxDate = getDateToday();
   let node = document.getElementById('boxscore');
   let dateCode = "<form action=javascript:handleDateSelect()>";
-  dateCode += "<input type='date' id='dateSelect' name='dateSelect' value=" + date +" max=" + maxDate + ">"
+  dateCode += "<input type='date' id='dateSelect' name='dateSelect' value='" + date + "' max='" + maxDate + "' />"
   dateCode += "<button>Submit</button></form>"
   node.innerHTML = dateCode;
 }
 
 async function main() {
-  let curDate = new Date();
-  let date = curDate.getUTCFullYear() + "-" + (curDate.getUTCMonth() + 1) + "-" + curDate.getUTCDate();
+  let date = getDateToday();
   await generateBoxScoreDay(date);
 }
 main();
