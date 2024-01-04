@@ -10,7 +10,7 @@
 
 <script type="text/javascript">
   async function handleDateSelect() {
-    await generateBoxScoreDay(document.querySelector('input[type="date"]').value);
+    window.open("index.html?date=" + document.querySelector('input[type="date"]').value,"_self")
   }
 </script>
 

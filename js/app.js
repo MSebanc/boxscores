@@ -189,8 +189,31 @@ function dateCode(date) {
   node.innerHTML = dateCode;
 }
 
+// https://stackoverflow.com/questions/18758772/how-do-i-validate-a-date-in-this-format-yyyy-mm-dd-using-jquery
+function isValidDate(dateString) {
+  let regEx = /^\d{4}-\d{2}-\d{2}$/;
+  if(!dateString.match(regEx)) return false;  // Invalid format
+  let d = new Date(dateString);
+  let curDate = new Date();
+  if (d.getUTCFullYear() > curDate.getFullYear()) return false;
+  if (d.getFullYear() === curDate.getFullYear()) {
+    if (d.getUTCMonth() > curDate.getMonth()) return false;
+    if (d.getUTCMonth() === curDate.getMonth() && d.getUTCDay() > curDate.getDay()) return false;
+  }
+  let dNum = d.getTime();
+  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+  return d.toISOString().slice(0,10) === dateString;
+}
+
 async function main() {
-  let date = getDateToday();
+  let urlParams = new URLSearchParams(window.location.search);
+  let date = urlParams.get("date");
+  if (!date) {
+    date = getDateToday();
+  }
+  if (!isValidDate(date)) {
+    window.open("index.html","_self");
+  }
   await generateBoxScoreDay(date);
 }
 main();
