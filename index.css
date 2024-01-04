@@ -32,7 +32,7 @@ thead th {
 td {
     text-align: center;
     border: 0 solid #ddd;
-    border-bottom: 1px dotted;
+    border-bottom: 1px dotted #ddd;
     border-left-width: 1px;
     padding: 3px 4px;
 }

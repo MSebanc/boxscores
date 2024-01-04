@@ -4,7 +4,7 @@ function getGameData(gamePk) {
 
 function getPitcherBoxScore(team, data) {
   let tableCode = "<table><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Pitchers</th> ";
-  tableCode += "<th class='noLeftBorder'>IP</th> <th>H</th> <th>R</th> <th>ER</th> <th>BB</th> <th>K</th> <th>HR</th> <th>ERA</th></tr></thead><tbody>";
+  tableCode += "<th>IP</th> <th>H</th> <th>R</th> <th>ER</th> <th>BB</th> <th>K</th> <th>HR</th> <th>ERA</th></tr></thead><tbody>";
   let td = "<td>";
   let tdName = "<td class='noLeftBorder' style='text-align: left'>";
   let tdNoLeft = "<td class='noLeftBorder'>"
@@ -82,7 +82,7 @@ function getBattingNotes(team, data) {
 
 function getBatterBoxScore(team, data) {
   let tableCode = "<table><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Batters</th> ";
-  tableCode += "<th class='noLeftBorder'>AB</th> <th>R</th> <th>H</th> <th>RBI</th> <th>BB</th> <th>K</th> <th>LOB</th> <th>AVG</th> <th>OPS</th></tr></thead>";
+  tableCode += "<th>AB</th> <th>R</th> <th>H</th> <th>RBI</th> <th>BB</th> <th>K</th> <th>LOB</th> <th>AVG</th> <th>OPS</th></tr></thead>";
   let batters = [];
   for (let i = 0; i < data["teams"][team]["batters"].length; i++) {
     let batterID = "ID" + data["teams"][team]["batters"][i];
@@ -243,6 +243,6 @@ function mockMain() {
   });
 }
 
-main();
-// mockMain();
+// main();
+mockMain();
 
