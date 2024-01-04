@@ -219,6 +219,7 @@ function isValidDate(dateString) {
   }
   let dNum = d.getTime();
   if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+  if (isNaN(d.getTime())) return false;
   return d.toISOString().slice(0,10) === dateString;
 }
 
@@ -229,7 +230,7 @@ function main() {
     date = getDateToday();
   }
   if (!isValidDate(date)) {
-    window.open("index.html","_self");
+    window.open("./","_self");
   }
   generateBoxScoreDay(date).then(() => {
     console.log("day loaded");
