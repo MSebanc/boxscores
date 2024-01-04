@@ -243,6 +243,6 @@ function mockMain() {
   });
 }
 
-// main();
-mockMain();
+main();
+// mockMain();
 
