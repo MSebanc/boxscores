@@ -25,16 +25,16 @@ thead th {
     border-bottom-style: solid;
 }
 
+.noLeftBorder {
+    border-left-width: 0;
+}
+
 td {
     text-align: center;
     border: 0 solid #ddd;
     border-bottom: 1px dotted;
     border-left-width: 1px;
     padding: 3px 4px;
-}
-
-.noLeftBorder {
-    border-left-width: 0;
 }
 
 .noBottomBorder {
@@ -46,9 +46,4 @@ td {
     border-bottom-width: 0;
     font-weight: bold;
     background-color: #eeeeee;
-}
-
-.name {
-    border-left-width: 0;
-    border-right: 1px solid #747678;
 }

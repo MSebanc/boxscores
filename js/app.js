@@ -6,12 +6,12 @@ function getPitcherBoxScore(team, data) {
   let tableCode = "<table><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Pitchers</th> ";
   tableCode += "<th class='noLeftBorder'>IP</th> <th>H</th> <th>R</th> <th>ER</th> <th>BB</th> <th>K</th> <th>HR</th> <th>ERA</th></tr></thead><tbody>";
   let td = "<td>";
-  let tdName = "<td class='name' style='text-align: left'>";
+  let tdName = "<td class='noLeftBorder' style='text-align: left'>";
   let tdNoLeft = "<td class='noLeftBorder'>"
   for (let i = 0; i < data["teams"][team]["pitchers"].length; i++) {
     if (i === data["teams"][team]["pitchers"].length - 1) {
       td = "<td class='noBottomBorder'>";
-      tdName = "<td class='name noBottomBorder' style='text-align: left'>"
+      tdName = "<td class='noLeftBorder noBottomBorder' style='text-align: left'>"
       tdNoLeft = "<td class='noLeftBorder noBottomBorder'>"
     }
     let pitcherID = "ID" + data["teams"][team]["pitchers"][i];
@@ -20,7 +20,7 @@ function getPitcherBoxScore(team, data) {
       tableCode += " " + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["note"];
     }
     tableCode += "</td>"
-    tableCode += tdNoLeft + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["inningsPitched"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["inningsPitched"] + "</td>";
     tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["hits"] + "</td>";
     tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["runs"] + "</td>";
     tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["earnedRuns"] + "</td>";
@@ -31,8 +31,8 @@ function getPitcherBoxScore(team, data) {
     tableCode += "</tr>"
   }
 
-  tableCode += "<tr><td class='name total' style='text-align: left'><b>Totals</b></td>";
-  tableCode += "<td class='noLeftBorder total'>" + data["teams"][team]["teamStats"]["pitching"]["inningsPitched"] + "</td>";
+  tableCode += "<tr><td class='noLeftBorder total' style='text-align: left'><b>Totals</b></td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["inningsPitched"] + "</td>";
   tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["hits"] + "</td>";
   tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["runs"] + "</td>";
   tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["earnedRuns"] + "</td>";
@@ -92,13 +92,13 @@ function getBatterBoxScore(team, data) {
   }
   batters.sort((a, b) => parseInt(a.pos) - parseInt(b.pos));
   let td = "<td>";
-  let tdName = "<td class='name' style='text-align: left'>";
+  let tdName = "<td class='noLeftBorder' style='text-align: left'>";
   let tdNoLeft = "<td class='noLeftBorder'>"
   let i = 0;
   for (let batter of batters) {
     if (i === batters.length - 1) {
       td = "<td class='noBottomBorder'>";
-      tdName = "<td class='name noBottomBorder' style='text-align: left'>"
+      tdName = "<td class='noLeftBorder noBottomBorder' style='text-align: left'>"
       tdNoLeft = "<td class='noLeftBorder noBottomBorder'>"
     }
     tableCode += "<tbody><tr>" + tdName;
@@ -115,20 +115,20 @@ function getBatterBoxScore(team, data) {
       }
       tableCode += data["teams"][team]["players"][batter.id]["allPositions"][i]["abbreviation"];
     }
-    tableCode += "</td>" + tdNoLeft + data["teams"][team]["players"][batter.id]["stats"]["batting"]["atBats"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["runs"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["hits"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["rbi"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["baseOnBalls"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["strikeOuts"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["leftOnBase"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][batter.id]["seasonStats"]["batting"]["avg"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][batter.id]["seasonStats"]["batting"]["ops"] + "</td>";
+    tableCode += "</td>" + td + data["teams"][team]["players"][batter.id]["stats"]["batting"]["atBats"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][batter.id]["stats"]["batting"]["runs"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][batter.id]["stats"]["batting"]["hits"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][batter.id]["stats"]["batting"]["rbi"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][batter.id]["stats"]["batting"]["baseOnBalls"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][batter.id]["stats"]["batting"]["strikeOuts"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][batter.id]["stats"]["batting"]["leftOnBase"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][batter.id]["seasonStats"]["batting"]["avg"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][batter.id]["seasonStats"]["batting"]["ops"] + "</td>";
     tableCode += "</tr>"
     i++;
   }
-  tableCode += "<tr><td class='name total' style='text-align: left'><b>Totals</b></td>"
-  tableCode += "<td class='total noLeftBorder'>" + data["teams"][team]["teamStats"]["batting"]["atBats"] + "</td>";
+  tableCode += "<tr><td class='noLeftBorder total' style='text-align: left'><b>Totals</b></td>"
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["atBats"] + "</td>";
   tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["runs"] + "</td>";
   tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["hits"] + "</td>";
   tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["rbi"] + "</td>";
