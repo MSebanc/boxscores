@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>Box Scores</title>
+  <link rel="stylesheet" href="./index.css">
 </head>
 <body>
 
@@ -10,10 +11,11 @@
 
 <script type="text/javascript">
   async function handleDateSelect() {
-    window.open("index.html?date=" + document.querySelector('input[type="date"]').value,"_self")
+    window.open("index.html?date=" + document.querySelector('input[type="date"]').value,"_self");
   }
 </script>
 
+<div id="date"></div>
 <div id="boxscore"></div>
 
 

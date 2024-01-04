@@ -3,35 +3,44 @@ function getGameData(gamePk) {
 }
 
 function getPitcherBoxScore(team, data) {
-  let tableCode = "<table><tr><th style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Pitchers</th> ";
-  tableCode += "<th>IP</th> <th>H</th> <th>R</th> <th>ER</th> <th>BB</th> <th>K</th> <th>HR</th> <th>ERA</th></tr>";
+  let tableCode = "<table><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Pitchers</th> ";
+  tableCode += "<th class='noLeftBorder'>IP</th> <th>H</th> <th>R</th> <th>ER</th> <th>BB</th> <th>K</th> <th>HR</th> <th>ERA</th></tr></thead><tbody>";
+  let td = "<td>";
+  let tdName = "<td class='name' style='text-align: left'>";
+  let tdNoLeft = "<td class='noLeftBorder'>"
   for (let i = 0; i < data["teams"][team]["pitchers"].length; i++) {
+    if (i === data["teams"][team]["pitchers"].length - 1) {
+      td = "<td class='noBottomBorder'>";
+      tdName = "<td class='name noBottomBorder' style='text-align: left'>"
+      tdNoLeft = "<td class='noLeftBorder noBottomBorder'>"
+    }
     let pitcherID = "ID" + data["teams"][team]["pitchers"][i];
-    tableCode += "<tr><td>" + data["teams"][team]["players"][pitcherID]["person"]["fullName"];
+    tableCode += "<tr>" + tdName + data["teams"][team]["players"][pitcherID]["person"]["fullName"];
     if ("note" in data["teams"][team]["players"][pitcherID]["stats"]["pitching"]) {
       tableCode += " " + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["note"];
     }
     tableCode += "</td>"
-    tableCode += "<td>" + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["inningsPitched"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["hits"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["runs"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["earnedRuns"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["baseOnBalls"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["strikeOuts"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["homeRuns"] + "</td>";
-    tableCode += "<td>" + data["teams"][team]["players"][pitcherID]["seasonStats"]["pitching"]["era"] + "</td>";
+    tableCode += tdNoLeft + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["inningsPitched"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["hits"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["runs"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["earnedRuns"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["baseOnBalls"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["strikeOuts"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][pitcherID]["stats"]["pitching"]["homeRuns"] + "</td>";
+    tableCode += td + data["teams"][team]["players"][pitcherID]["seasonStats"]["pitching"]["era"] + "</td>";
     tableCode += "</tr>"
   }
 
-  tableCode += "<tr><td><b>Totals</b></td><td>" + data["teams"][team]["teamStats"]["pitching"]["inningsPitched"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["pitching"]["hits"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["pitching"]["runs"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["pitching"]["earnedRuns"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["pitching"]["baseOnBalls"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["pitching"]["strikeOuts"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["pitching"]["homeRuns"] + "</td></tr>";
+  tableCode += "<tr><td class='name total' style='text-align: left'><b>Totals</b></td>";
+  tableCode += "<td class='noLeftBorder total'>" + data["teams"][team]["teamStats"]["pitching"]["inningsPitched"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["hits"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["runs"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["earnedRuns"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["baseOnBalls"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["strikeOuts"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["pitching"]["homeRuns"] + "</td><td class='total'></td></tr>";
 
-  tableCode += "</table>";
+  tableCode += "</tbody></table>";
   return tableCode;
 }
 
@@ -72,8 +81,8 @@ function getBattingNotes(team, data) {
 }
 
 function getBatterBoxScore(team, data) {
-  let tableCode = "<table><tr><th></th><th style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Batters</th> ";
-  tableCode += "<th>AB</th> <th>R</th> <th>H</th> <th>RBI</th> <th>BB</th> <th>K</th> <th>LOB</th> <th>AVG</th> <th>OPS</th></tr>";
+  let tableCode = "<table><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Batters</th> ";
+  tableCode += "<th class='noLeftBorder'>AB</th> <th>R</th> <th>H</th> <th>RBI</th> <th>BB</th> <th>K</th> <th>LOB</th> <th>AVG</th> <th>OPS</th></tr></thead>";
   let batters = [];
   for (let i = 0; i < data["teams"][team]["batters"].length; i++) {
     let batterID = "ID" + data["teams"][team]["batters"][i];
@@ -82,12 +91,19 @@ function getBatterBoxScore(team, data) {
     }
   }
   batters.sort((a, b) => parseInt(a.pos) - parseInt(b.pos));
+  let td = "<td>";
+  let tdName = "<td class='name' style='text-align: left'>";
+  let tdNoLeft = "<td class='noLeftBorder'>"
+  let i = 0;
   for (let batter of batters) {
-    tableCode += "<tr><td>";
-    if (batter.pos % 100 === 0) {
-      tableCode += (batter.pos / 100) + " </td><td>";
-    } else {
-      tableCode += "</td><td>&nbsp&nbsp&nbsp&nbsp";
+    if (i === batters.length - 1) {
+      td = "<td class='noBottomBorder'>";
+      tdName = "<td class='name noBottomBorder' style='text-align: left'>"
+      tdNoLeft = "<td class='noLeftBorder noBottomBorder'>"
+    }
+    tableCode += "<tbody><tr>" + tdName;
+    if (batter.pos % 100 !== 0) {
+      tableCode += "&nbsp&nbsp&nbsp&nbsp";
       if ("note" in data["teams"][team]["players"][batter.id]["stats"]["batting"]) {
         tableCode += data["teams"][team]["players"][batter.id]["stats"]["batting"]["note"];
       }
@@ -99,7 +115,7 @@ function getBatterBoxScore(team, data) {
       }
       tableCode += data["teams"][team]["players"][batter.id]["allPositions"][i]["abbreviation"];
     }
-    tableCode += "</td><td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["atBats"] + "</td>";
+    tableCode += "</td>" + tdNoLeft + data["teams"][team]["players"][batter.id]["stats"]["batting"]["atBats"] + "</td>";
     tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["runs"] + "</td>";
     tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["hits"] + "</td>";
     tableCode += "<td>" + data["teams"][team]["players"][batter.id]["stats"]["batting"]["rbi"] + "</td>";
@@ -109,16 +125,17 @@ function getBatterBoxScore(team, data) {
     tableCode += "<td>" + data["teams"][team]["players"][batter.id]["seasonStats"]["batting"]["avg"] + "</td>";
     tableCode += "<td>" + data["teams"][team]["players"][batter.id]["seasonStats"]["batting"]["ops"] + "</td>";
     tableCode += "</tr>"
+    i++;
   }
-  tableCode += "<tr><td></td><td><b>Totals</b></td>"
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["batting"]["atBats"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["batting"]["runs"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["batting"]["hits"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["batting"]["rbi"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["batting"]["baseOnBalls"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["batting"]["strikeOuts"] + "</td>";
-  tableCode += "<td>" + data["teams"][team]["teamStats"]["batting"]["leftOnBase"] + "</td>";
-  tableCode += "</tr>"
+  tableCode += "<tr><td class='name total' style='text-align: left'><b>Totals</b></td>"
+  tableCode += "<td class='total noLeftBorder'>" + data["teams"][team]["teamStats"]["batting"]["atBats"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["runs"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["hits"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["rbi"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["baseOnBalls"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["strikeOuts"] + "</td>";
+  tableCode += "<td class='total'>" + data["teams"][team]["teamStats"]["batting"]["leftOnBase"] + "</td>";
+  tableCode += "<td class='total'></td><td class='total'></td></tr></tbody></table>"
 
   return tableCode;
 }
@@ -182,7 +199,7 @@ function getDateToday() {
 
 function dateCode(date) {
   let maxDate = getDateToday();
-  let node = document.getElementById('boxscore');
+  let node = document.getElementById('date');
   let dateCode = "<form action=javascript:handleDateSelect()>";
   dateCode += "<input type='date' id='dateSelect' name='dateSelect' value='" + date + "' max='" + maxDate + "' />"
   dateCode += "<button>Submit</button></form>"
@@ -205,7 +222,7 @@ function isValidDate(dateString) {
   return d.toISOString().slice(0,10) === dateString;
 }
 
-async function main() {
+function main() {
   let urlParams = new URLSearchParams(window.location.search);
   let date = urlParams.get("date");
   if (!date) {
@@ -214,7 +231,18 @@ async function main() {
   if (!isValidDate(date)) {
     window.open("index.html","_self");
   }
-  await generateBoxScoreDay(date);
+  generateBoxScoreDay(date).then(() => {
+    console.log("day loaded");
+  });
 }
-main();
+
+// used for testing
+function mockMain() {
+  generateBoxScoreDay("2023-09-15").then(() => {
+    console.log("day loaded");
+  });
+}
+
+// main();
+mockMain();
 
