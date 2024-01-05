@@ -154,11 +154,11 @@ async function generateBoxScore(gamePk) {
   node.innerHTML += getBatterBoxScore("away", data);
   node.innerHTML += getBattingNotes("away", data);
   node.innerHTML += getTeamBatFieldInfo("away", data);
-  node.innerHTML += getPitcherBoxScore("away", data);
-  node.innerHTML += "<br>"
   node.innerHTML += getBatterBoxScore("home", data);
   node.innerHTML += getBattingNotes("home", data);
   node.innerHTML += getTeamBatFieldInfo("home", data);
+  node.innerHTML += getPitcherBoxScore("away", data);
+  node.innerHTML += "<br>"
   node.innerHTML += getPitcherBoxScore("home", data);
   node.innerHTML += getGeneralGameStats(data);
   node.innerHTML += "<br><br>";
@@ -174,7 +174,18 @@ async function generateBoxScoreDay(date) {
   let data = await res.json();
   let node = document.getElementById('boxscore');
   dateCode(date);
-  node.innerHTML += "<h1>" + date + "</h1>"
+  let d = new Date(date);
+  let dateArray = date.split("-");
+  d.setUTCFullYear(dateArray[0]);
+  d.setUTCMonth((dateArray[1] - 1));
+  d.setUTCDate(dateArray[2]);
+  let options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: "UTC"
+  };
+  node.innerHTML += "<h1>" + d.toLocaleDateString("default", options) + "</h1>"
   if (data["dates"].length === 0) {
     node.innerHTML += "<h2>No Games Today</h2>"
   } else {
@@ -204,6 +215,8 @@ function dateCode(date) {
   dateCode += "<input type='date' id='dateSelect' name='dateSelect' value='" + date + "' max='" + maxDate + "' />"
   dateCode += "<button>Submit</button></form>"
   node.innerHTML = dateCode;
+  node = document.getElementById('title');
+  node.innerHTML = "Box Scores " + date;
 }
 
 // https://stackoverflow.com/questions/18758772/how-do-i-validate-a-date-in-this-format-yyyy-mm-dd-using-jquery
@@ -215,7 +228,7 @@ function isValidDate(dateString) {
   if (d.getUTCFullYear() > curDate.getFullYear()) return false;
   if (d.getFullYear() === curDate.getFullYear()) {
     if (d.getUTCMonth() > curDate.getMonth()) return false;
-    if (d.getUTCMonth() === curDate.getMonth() && d.getUTCDay() > curDate.getDay()) return false;
+    if (d.getUTCMonth() === curDate.getMonth() && d.getUTCDate() > curDate.getDate()) return false;
   }
   let dNum = d.getTime();
   if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
