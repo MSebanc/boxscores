@@ -45,12 +45,12 @@ function getPitcherBoxScore(team, data) {
 }
 
 function getGeneralGameStats(data) {
-  let generalCode = "";
+  let generalCode = "<br><div class='title'>OTHER INFO</div>";
   for (let i = 0; i < data.info.length; i++) {
-    generalCode += "<br>"
-    generalCode += data.info[i].label;
     if ("value" in data.info[i]) {
-      generalCode += ": " + data.info[i].value;
+      generalCode += "<div class='subtitle'>" + data.info[i].label + "</div>: " + data.info[i].value + "<br>";
+    } else {
+      generalCode += "<div class='subtitle'>Day:</div> " + data.info[i].label;
     }
   }
   return generalCode;
@@ -59,10 +59,10 @@ function getGeneralGameStats(data) {
 function getTeamBatFieldInfo(team, data) {
   let teamInfoCode = "";
   for (let i = 0; i < data["teams"][team]["info"].length; i++) {
-    teamInfoCode += data["teams"][team]["info"][i]["title"] + "<br>";
+    teamInfoCode += "<div class='title'>" + data["teams"][team]["info"][i]["title"] + "</div>";
     let fieldList = data["teams"][team]["info"][i]["fieldList"];
     for (let j = 0; j < fieldList.length; j++) {
-      teamInfoCode += fieldList[j]["label"] + ": " + fieldList[j]["value"] + "<br>";
+      teamInfoCode += "<div class='subtitle'>" + fieldList[j]["label"] + ":</div> " + fieldList[j]["value"] + "<br>";
     }
     teamInfoCode += "<br>";
   }
@@ -257,6 +257,6 @@ function mockMain() {
   });
 }
 
-main();
-// mockMain();
+// main();
+mockMain();
 

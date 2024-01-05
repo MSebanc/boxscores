@@ -47,3 +47,18 @@ td {
     font-weight: bold;
     background-color: #eeeeee;
 }
+
+.title {
+    color: #990000;
+    font-weight: bold;
+}
+
+.subtitle {
+    display: inline;
+    font-weight: bold;
+}
+
+h1 {
+    color: #990000;
+}
+
