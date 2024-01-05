@@ -169,9 +169,34 @@ function getSchedule(date) {
   return fetch(`https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&date=${date}`);
 }
 
+function sortGames(games) {
+  let gameArray = [];
+  for (let i = 0; i < games.length; i++) {
+    gameArray.push({
+      gamePk: games[i]["gamePk"],
+      home: games[i]["teams"]["home"]["team"]["name"],
+      away: games[i]["teams"]["away"]["team"]["name"]
+    });
+  }
+  return gameArray.sort((g1, g2) => {
+    const goodTeams = ["Boston Red Sox", "Chicago Cubs", "Kansas City Royals", "Seattle Mariners"]
+    if ((goodTeams.includes(g1["home"]) || goodTeams.includes(g1["away"]))
+        && (goodTeams.includes(g2["home"]) || goodTeams.includes(g2["away"]))) {
+      for (let team of goodTeams) {
+        if (team === g1["home"] || team ===  g1["away"]) return -1;
+        if (team === g2["home"] || team ===  g2["away"]) return 1;
+      }
+    }
+    if (goodTeams.includes(g1["home"]) || goodTeams.includes(g1["away"])) return -1;
+    if (goodTeams.includes(g2["home"]) || goodTeams.includes(g2["away"])) return 1;
+    return 0;
+  });
+}
+
 async function generateBoxScoreDay(date) {
   let res = await getSchedule(date);
   let data = await res.json();
+  console.log(data)
   let node = document.getElementById('boxscore');
   dateCode(date);
   let d = new Date(date);
@@ -189,8 +214,9 @@ async function generateBoxScoreDay(date) {
   if (data["dates"].length === 0) {
     node.innerHTML += "<h2>No Games Today</h2>"
   } else {
-    for (let i = 0; i < data["dates"][0]["games"].length; i++) {
-      await generateBoxScore(data["dates"][0]["games"][i]["gamePk"]);
+    let games = sortGames(data["dates"][0]["games"]);
+    for (let i = 0; i < games.length; i++) {
+      await generateBoxScore(games[i]["gamePk"]);
     }
   }
 }
