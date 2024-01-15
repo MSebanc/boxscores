@@ -2,8 +2,12 @@ function getGameData(gamePk) {
   return fetch(`https://statsapi.mlb.com/api/v1/game/${gamePk}/boxscore`);
 }
 
+function getSchedule(date) {
+  return fetch(`https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&date=${date}`);
+}
+
 function getPitcherBoxScore(team, data) {
-  let tableCode = "<table><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Pitchers</th> ";
+  let tableCode = "<table class='boxscore'><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Pitchers</th> ";
   tableCode += "<th>IP</th> <th>H</th> <th>R</th> <th>ER</th> <th>BB</th> <th>K</th> <th>HR</th> <th>ERA</th></tr></thead><tbody>";
   let td = "<td>";
   let tdName = "<td class='noLeftBorder' style='text-align: left'>";
@@ -81,7 +85,7 @@ function getBattingNotes(team, data) {
 }
 
 function getBatterBoxScore(team, data) {
-  let tableCode = "<table><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Batters</th> ";
+  let tableCode = "<table class='boxscore'><thead><tr><th class='name' style='text-align: left'>" + data["teams"][team]["team"]["clubName"] + " Batters</th> ";
   tableCode += "<th>AB</th> <th>R</th> <th>H</th> <th>RBI</th> <th>BB</th> <th>K</th> <th>LOB</th> <th>AVG</th> <th>OPS</th></tr></thead>";
   let batters = [];
   for (let i = 0; i < data["teams"][team]["batters"].length; i++) {
@@ -165,39 +169,53 @@ async function generateBoxScore(gamePk) {
 
 }
 
-function getSchedule(date) {
-  return fetch(`https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&date=${date}`);
-}
-
 function sortGames(games) {
-  let gameArray = [];
-  for (let i = 0; i < games.length; i++) {
-    gameArray.push({
-      gamePk: games[i]["gamePk"],
-      home: games[i]["teams"]["home"]["team"]["name"],
-      away: games[i]["teams"]["away"]["team"]["name"]
-    });
-  }
-  return gameArray.sort((g1, g2) => {
+  return games.sort((g1, g2) => {
+    let g1Home = g1["teams"]["home"]["team"]["name"];
+    let g1Away = g1["teams"]["away"]["team"]["name"];
+    let g2Home = g2["teams"]["home"]["team"]["name"];
+    let g2Away = g2["teams"]["away"]["team"]["name"]
     const goodTeams = ["Boston Red Sox", "Chicago Cubs", "Kansas City Royals", "Seattle Mariners"]
-    if ((goodTeams.includes(g1["home"]) || goodTeams.includes(g1["away"]))
-        && (goodTeams.includes(g2["home"]) || goodTeams.includes(g2["away"]))) {
+    if ((goodTeams.includes(g1Home) || goodTeams.includes(g1Away))
+        && (goodTeams.includes(g2Home) || goodTeams.includes(g2Away))) {
       for (let team of goodTeams) {
-        if (team === g1["home"] || team ===  g1["away"]) return -1;
-        if (team === g2["home"] || team ===  g2["away"]) return 1;
+        if (team === g1Home || team ===  g1Away) return -1;
+        if (team === g2Home || team ===  g2Away) return 1;
       }
     }
-    if (goodTeams.includes(g1["home"]) || goodTeams.includes(g1["away"])) return -1;
-    if (goodTeams.includes(g2["home"]) || goodTeams.includes(g2["away"])) return 1;
+    if (goodTeams.includes(g1Home) || goodTeams.includes(g1Away)) return -1;
+    if (goodTeams.includes(g2Home) || goodTeams.includes(g2Away)) return 1;
     return 0;
   });
+}
+
+async function generateTeamBox(game) {
+  let teamBoxCode = "<div class='score'><table><tbody>";
+  let res = await fetch("https://statsapi.mlb.com" + game["teams"]["away"]["team"]["link"]);
+  let awayTeam = await res.json();
+  res = await fetch("https://statsapi.mlb.com" + game["teams"]["home"]["team"]["link"]);
+  let homeTeam = await res.json();
+  teamBoxCode += "<tr><td>" + awayTeam["teams"][0]["abbreviation"] + "</td>";
+  teamBoxCode += "<td>" + game["teams"]["away"]["score"] + "</td><td>" + game["status"]["detailedState"] + "</td></tr>";
+  teamBoxCode += "<tr><td>" + homeTeam["teams"][0]["abbreviation"] + "</td><td>" + game["teams"]["home"]["score"] + "</td>"
+  teamBoxCode += "<td></td></tr></tbody></table></div>"
+
+  return teamBoxCode;
+}
+
+async function generateDayScores(games) {
+  let node = document.getElementById('scoreboard');
+  for (let i = 0; i < games.length; i++) {
+    node.innerHTML += await generateTeamBox(games[i]);
+  }
 }
 
 async function generateBoxScoreDay(date) {
   let res = await getSchedule(date);
   let data = await res.json();
   console.log(data)
-  let node = document.getElementById('boxscore');
+  let title = document.getElementById('dayTitle');
+  let node = document.getElementById('dayTitle');
   dateCode(date);
   let d = new Date(date);
   let dateArray = date.split("-");
@@ -210,11 +228,12 @@ async function generateBoxScoreDay(date) {
     day: 'numeric',
     timeZone: "UTC"
   };
-  node.innerHTML += "<h1>" + d.toLocaleDateString("default", options) + "</h1>"
+  title.innerHTML += "<h1>" + d.toLocaleDateString("default", options) + "</h1>"
   if (data["dates"].length === 0) {
     node.innerHTML += "<h2>No Games Today</h2>"
   } else {
     let games = sortGames(data["dates"][0]["games"]);
+    await generateDayScores(games);
     for (let i = 0; i < games.length; i++) {
       await generateBoxScore(games[i]["gamePk"]);
     }
