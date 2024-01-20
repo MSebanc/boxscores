@@ -154,6 +154,7 @@ async function generateBoxScore(gamePk) {
   let res = await getGameData(gamePk);
   let data = await res.json();
   let node = document.getElementById('boxscore');
+  node.innerHTML += "<div id='" + gamePk + "'>"
   node.innerHTML += getGameTitle(data);
   node.innerHTML += getBatterBoxScore("away", data);
   node.innerHTML += getBattingNotes("away", data);
@@ -165,7 +166,7 @@ async function generateBoxScore(gamePk) {
   node.innerHTML += "<br>"
   node.innerHTML += getPitcherBoxScore("home", data);
   node.innerHTML += getGeneralGameStats(data);
-  node.innerHTML += "<br><br>";
+  node.innerHTML += "<br></div>";
 
 }
 
@@ -190,7 +191,8 @@ function sortGames(games) {
 }
 
 async function generateTeamBox(game) {
-  let teamBoxCode = "<div class='score'><table><tbody>";
+  let teamBoxCode = "<a class='scoreboardLink' href='#" + game["gamePk"] + "'>"
+      + "<div class='score'><table><tbody>";
   let res = await fetch("https://statsapi.mlb.com" + game["teams"]["away"]["team"]["link"]);
   let awayTeam = await res.json();
   res = await fetch("https://statsapi.mlb.com" + game["teams"]["home"]["team"]["link"]);
@@ -198,7 +200,7 @@ async function generateTeamBox(game) {
   teamBoxCode += "<tr><td>" + awayTeam["teams"][0]["abbreviation"] + "</td>";
   teamBoxCode += "<td>" + game["teams"]["away"]["score"] + "</td><td>" + game["status"]["detailedState"] + "</td></tr>";
   teamBoxCode += "<tr><td>" + homeTeam["teams"][0]["abbreviation"] + "</td><td>" + game["teams"]["home"]["score"] + "</td>"
-  teamBoxCode += "<td></td></tr></tbody></table></div>"
+  teamBoxCode += "<td></td></tr></tbody></table></div></a>"
 
   return teamBoxCode;
 }
