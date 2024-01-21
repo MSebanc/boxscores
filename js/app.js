@@ -190,17 +190,25 @@ function sortGames(games) {
   });
 }
 
-async function generateTeamBox(game) {
+async function generateTeamScore(game) {
   let teamBoxCode = "<a class='scoreboardLink' href='#" + game["gamePk"] + "'>"
       + "<div class='score'><table><tbody>";
   let res = await fetch("https://statsapi.mlb.com" + game["teams"]["away"]["team"]["link"]);
   let awayTeam = await res.json();
   res = await fetch("https://statsapi.mlb.com" + game["teams"]["home"]["team"]["link"]);
   let homeTeam = await res.json();
-  teamBoxCode += "<tr><td>" + awayTeam["teams"][0]["abbreviation"] + "</td>";
-  teamBoxCode += "<td>" + game["teams"]["away"]["score"] + "</td><td>" + game["status"]["detailedState"] + "</td></tr>";
-  teamBoxCode += "<tr><td>" + homeTeam["teams"][0]["abbreviation"] + "</td><td>" + game["teams"]["home"]["score"] + "</td>"
-  teamBoxCode += "<td></td></tr></tbody></table></div></a>"
+  teamBoxCode += "<tr><td>" + awayTeam["teams"][0]["abbreviation"] + "</td><td>";
+  if (game["status"]["detailedState"] !== "Postponed") {
+    teamBoxCode += game["teams"]["away"]["score"];
+  }
+  teamBoxCode += "</td><td>" + game["status"]["detailedState"] + "</td></tr>";
+  teamBoxCode += "<tr><td>" + homeTeam["teams"][0]["abbreviation"] + "</td><td>";
+  if (game["status"]["detailedState"] === "Postponed") {
+    teamBoxCode += "</td>"
+  } else {
+    teamBoxCode += game["teams"]["home"]["score"];
+  }
+  teamBoxCode += "</td><td></td></tr></tbody></table></div></a>"
 
   return teamBoxCode;
 }
@@ -208,7 +216,7 @@ async function generateTeamBox(game) {
 async function generateDayScores(games) {
   let node = document.getElementById('scoreboard');
   for (let i = 0; i < games.length; i++) {
-    node.innerHTML += await generateTeamBox(games[i]);
+    node.innerHTML += await generateTeamScore(games[i]);
   }
 }
 
@@ -237,6 +245,9 @@ async function generateBoxScoreDay(date) {
     let games = sortGames(data["dates"][0]["games"]);
     await generateDayScores(games);
     for (let i = 0; i < games.length; i++) {
+      if (games[i]["status"]["detailedState"] === "Postponed") {
+        continue;
+      }
       await generateBoxScore(games[i]["gamePk"]);
     }
   }
