@@ -174,26 +174,6 @@ async function generateBoxScore(gamePk) {
   });
 }
 
-function sortGames(games) {
-  return games.sort((g1, g2) => {
-    let g1Home = g1["teams"]["home"]["team"]["name"];
-    let g1Away = g1["teams"]["away"]["team"]["name"];
-    let g2Home = g2["teams"]["home"]["team"]["name"];
-    let g2Away = g2["teams"]["away"]["team"]["name"]
-    const goodTeams = ["Boston Red Sox", "Chicago Cubs", "Kansas City Royals", "Seattle Mariners"]
-    if ((goodTeams.includes(g1Home) || goodTeams.includes(g1Away))
-        && (goodTeams.includes(g2Home) || goodTeams.includes(g2Away))) {
-      for (let team of goodTeams) {
-        if (team === g1Home || team ===  g1Away) return -1;
-        if (team === g2Home || team ===  g2Away) return 1;
-      }
-    }
-    if (goodTeams.includes(g1Home) || goodTeams.includes(g1Away)) return -1;
-    if (goodTeams.includes(g2Home) || goodTeams.includes(g2Away)) return 1;
-    return 0;
-  });
-}
-
 async function generateTeamScore(game) {
   return new Promise((resolve) => {
     let teamBoxCode = "";
@@ -232,7 +212,7 @@ async function generateTeamScore(game) {
           teamBoxCode += game["teams"]["home"]["score"];
         }
         teamBoxCode += "</td><td></td></tr></tbody></table></div></a>"
-        resolve(teamBoxCode)
+        resolve(teamBoxCode);
       });
     })
   });
@@ -243,16 +223,17 @@ async function generateDayScores(games) {
   let node = document.getElementById('scoreboard');
   for (let i = 0; i < games.length; i++) {
     if (goodTeams.includes(games[i]["teams"]["home"]["team"]["name"])) {
-      let id = games[i]["teams"]["home"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
-      let teamNode = document.getElementById(id)
       generateTeamScore(games[i]).then((res) => {
-        teamNode.innerHTML = res;
+        let id = games[i]["teams"]["home"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
+        let teamNode = document.getElementById(id);
+        teamNode.innerHTML += "" + res;
+        node = document.getElementById('scoreboard');
       });
     } else if (goodTeams.includes(games[i]["teams"]["away"]["team"]["name"])) {
-      let id = games[i]["teams"]["away"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
-      let teamNode = document.getElementById(id)
       generateTeamScore(games[i]).then((res) => {
-        teamNode.innerHTML = res;
+        let id = games[i]["teams"]["away"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
+        let teamNode = document.getElementById(id);
+        teamNode.innerHTML += "" + res;
       });
     } else {
       generateTeamScore(games[i]).then((res) => {
@@ -270,22 +251,21 @@ async function generateBoxScoreTeams(games) {
     const goodTeams = ["Boston Red Sox", "Chicago Cubs", "Kansas City Royals", "Seattle Mariners"];
     let node = document.getElementById("boxscore");
     if (goodTeams.includes(games[i]["teams"]["home"]["team"]["name"])) {
-      let id = games[i]["teams"]["home"]["team"]["name"].replace(/\s+/g, '') + "Box";
-      let teamNode = document.getElementById(id);
       generateBoxScore(games[i]["gamePk"]).then((res) => {
-        teamNode.innerHTML = res;
+        let id = games[i]["teams"]["home"]["team"]["name"].replace(/\s+/g, '') + "Box";
+        let teamNode = document.getElementById(id);
+        teamNode.innerHTML += "" + res;
       });
     } else if (goodTeams.includes(games[i]["teams"]["away"]["team"]["name"])) {
-      let id = games[i]["teams"]["away"]["team"]["name"].replace(/\s+/g, '') + "Box";
-      let teamNode = document.getElementById(id);
       generateBoxScore(games[i]["gamePk"]).then((res) => {
-        teamNode.innerHTML = res;
+        let id = games[i]["teams"]["away"]["team"]["name"].replace(/\s+/g, '') + "Box";
+        let teamNode = document.getElementById(id);
+        teamNode.innerHTML += "" + res;
       });
     } else {
       generateBoxScore(games[i]["gamePk"]).then((res) => {
         node.innerHTML += "<div class='teamBoxscore'>" + res + "</div>";
       });
-
     }
   }
 }
@@ -311,12 +291,12 @@ async function generateBoxScoreDay(date) {
   if (data["dates"].length === 0) {
     node.innerHTML += "<h2>No Games Today</h2>"
   } else {
-    let games = sortGames(data["dates"][0]["games"]);
+    let games = data["dates"][0]["games"];
     generateDayScores(games).then(() => {
-      console.log("Loaded")
+      console.log("Loaded");
     });
     generateBoxScoreTeams(games).then(() => {
-      console.log("Loaded")
+      console.log("Loaded");
     });
   }
 }

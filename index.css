@@ -110,3 +110,6 @@ a {
     text-decoration: none;
 }
 
+.favScore div {
+    display: inline-block;
+}
