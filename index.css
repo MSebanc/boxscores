@@ -63,10 +63,9 @@ h1 {
 }
 
 .score {
-    display: inline-block;
     border: 1px solid black;
     padding: 0 2px;
-    margin: 0 1px 2px 1px;
+    margin: 0 1px;
 }
 
 input {
@@ -102,3 +101,12 @@ button {
 #up:hover {
     background-color: #eeeeee;
 }
+
+.teamScoreboard {
+    display: inline-block;
+}
+
+a {
+    text-decoration: none;
+}
+

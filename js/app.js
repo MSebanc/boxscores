@@ -151,23 +151,27 @@ function getGameTitle(data) {
 }
 
 async function generateBoxScore(gamePk) {
-  let res = await getGameData(gamePk);
-  let data = await res.json();
-  let node = document.getElementById('boxscore');
-  node.innerHTML += "<div id='" + gamePk + "'>"
-  node.innerHTML += getGameTitle(data);
-  node.innerHTML += getBatterBoxScore("away", data);
-  node.innerHTML += getBattingNotes("away", data);
-  node.innerHTML += getTeamBatFieldInfo("away", data);
-  node.innerHTML += getBatterBoxScore("home", data);
-  node.innerHTML += getBattingNotes("home", data);
-  node.innerHTML += getTeamBatFieldInfo("home", data);
-  node.innerHTML += getPitcherBoxScore("away", data);
-  node.innerHTML += "<br>"
-  node.innerHTML += getPitcherBoxScore("home", data);
-  node.innerHTML += getGeneralGameStats(data);
-  node.innerHTML += "<br></div>";
+  return new Promise((resolve) => {
+    getGameData(gamePk).then((res) => {
+      res.json().then((data) => {
+        let boxscoreCode = "<div id='" + gamePk + "'>";
+        boxscoreCode += getGameTitle(data);
+        boxscoreCode += getBatterBoxScore("away", data);
+        boxscoreCode += getBattingNotes("away", data);
+        boxscoreCode += getTeamBatFieldInfo("away", data);
+        boxscoreCode += getBatterBoxScore("home", data);
+        boxscoreCode += getBattingNotes("home", data);
+        boxscoreCode += getTeamBatFieldInfo("home", data);
+        boxscoreCode += getPitcherBoxScore("away", data);
+        boxscoreCode += "<br>"
+        boxscoreCode += getPitcherBoxScore("home", data);
+        boxscoreCode += getGeneralGameStats(data);
+        boxscoreCode += "<br></div>";
+        resolve(boxscoreCode);
+      });
 
+    });
+  });
 }
 
 function sortGames(games) {
@@ -191,39 +195,104 @@ function sortGames(games) {
 }
 
 async function generateTeamScore(game) {
-  let teamBoxCode = "<a class='scoreboardLink' href='#" + game["gamePk"] + "'>"
-      + "<div class='score'><table><tbody>";
-  let res = await fetch("https://statsapi.mlb.com" + game["teams"]["away"]["team"]["link"]);
-  let awayTeam = await res.json();
-  res = await fetch("https://statsapi.mlb.com" + game["teams"]["home"]["team"]["link"]);
-  let homeTeam = await res.json();
-  teamBoxCode += "<tr><td>" + awayTeam["teams"][0]["abbreviation"] + "</td><td>";
-  if (game["status"]["detailedState"] !== "Postponed") {
-    teamBoxCode += game["teams"]["away"]["score"];
-  }
-  teamBoxCode += "</td><td>" + game["status"]["detailedState"] + "</td></tr>";
-  teamBoxCode += "<tr><td>" + homeTeam["teams"][0]["abbreviation"] + "</td><td>";
-  if (game["status"]["detailedState"] === "Postponed") {
-    teamBoxCode += "</td>"
-  } else {
-    teamBoxCode += game["teams"]["home"]["score"];
-  }
-  teamBoxCode += "</td><td></td></tr></tbody></table></div></a>"
+  return new Promise((resolve) => {
+    let teamBoxCode = "";
+    let promisesAPI = [];
+    let promisesJSON = [];
+    let awayTeamName = game["teams"]["away"]["team"]["name"];
+    promisesAPI.push(fetch("https://statsapi.mlb.com" + game["teams"]["away"]["team"]["link"]));
+    promisesAPI.push(fetch("https://statsapi.mlb.com" + game["teams"]["home"]["team"]["link"]));
 
-  return teamBoxCode;
+    Promise.all(promisesAPI).then((results) => {
+      for (let res of results) {
+        promisesJSON.push(res.json());
+      }
+
+      Promise.all(promisesJSON).then((teams) => {
+        let awayTeam;
+        let homeTeam;
+        if (teams[0]["teams"][0]["name"] === awayTeamName) {
+          awayTeam = teams[0];
+          homeTeam = teams[1];
+        } else {
+          awayTeam = teams[1];
+          homeTeam = teams[0];
+        }
+        teamBoxCode+= "<a class='scoreboardLink' href='#" + game["gamePk"] + "'>"
+            + "<div class='score'><table><tbody>";
+        teamBoxCode += "<tr><td>" + awayTeam["teams"][0]["abbreviation"] + "</td><td>";
+        if (game["status"]["detailedState"] !== "Postponed") {
+          teamBoxCode += game["teams"]["away"]["score"];
+        }
+        teamBoxCode += "</td><td>" + game["status"]["detailedState"] + "</td></tr>";
+        teamBoxCode += "<tr><td>" + homeTeam["teams"][0]["abbreviation"] + "</td><td>";
+        if (game["status"]["detailedState"] === "Postponed") {
+          teamBoxCode += "</td>"
+        } else {
+          teamBoxCode += game["teams"]["home"]["score"];
+        }
+        teamBoxCode += "</td><td></td></tr></tbody></table></div></a>"
+        resolve(teamBoxCode)
+      });
+    })
+  });
 }
 
 async function generateDayScores(games) {
+  const goodTeams = ["Boston Red Sox", "Chicago Cubs", "Kansas City Royals", "Seattle Mariners"];
   let node = document.getElementById('scoreboard');
   for (let i = 0; i < games.length; i++) {
-    node.innerHTML += await generateTeamScore(games[i]);
+    if (goodTeams.includes(games[i]["teams"]["home"]["team"]["name"])) {
+      let id = games[i]["teams"]["home"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
+      let teamNode = document.getElementById(id)
+      generateTeamScore(games[i]).then((res) => {
+        teamNode.innerHTML = res;
+      });
+    } else if (goodTeams.includes(games[i]["teams"]["away"]["team"]["name"])) {
+      let id = games[i]["teams"]["away"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
+      let teamNode = document.getElementById(id)
+      generateTeamScore(games[i]).then((res) => {
+        teamNode.innerHTML = res;
+      });
+    } else {
+      generateTeamScore(games[i]).then((res) => {
+        node.innerHTML += "<div class='teamScoreboard'>" + res + "</div>";
+      });
+    }
+  }
+}
+
+async function generateBoxScoreTeams(games) {
+  for (let i = 0; i < games.length; i++) {
+    if (games[i]["status"]["detailedState"] === "Postponed") {
+      continue;
+    }
+    const goodTeams = ["Boston Red Sox", "Chicago Cubs", "Kansas City Royals", "Seattle Mariners"];
+    let node = document.getElementById("boxscore");
+    if (goodTeams.includes(games[i]["teams"]["home"]["team"]["name"])) {
+      let id = games[i]["teams"]["home"]["team"]["name"].replace(/\s+/g, '') + "Box";
+      let teamNode = document.getElementById(id);
+      generateBoxScore(games[i]["gamePk"]).then((res) => {
+        teamNode.innerHTML = res;
+      });
+    } else if (goodTeams.includes(games[i]["teams"]["away"]["team"]["name"])) {
+      let id = games[i]["teams"]["away"]["team"]["name"].replace(/\s+/g, '') + "Box";
+      let teamNode = document.getElementById(id);
+      generateBoxScore(games[i]["gamePk"]).then((res) => {
+        teamNode.innerHTML = res;
+      });
+    } else {
+      generateBoxScore(games[i]["gamePk"]).then((res) => {
+        node.innerHTML += "<div class='teamBoxscore'>" + res + "</div>";
+      });
+
+    }
   }
 }
 
 async function generateBoxScoreDay(date) {
   let res = await getSchedule(date);
   let data = await res.json();
-  console.log(data)
   let title = document.getElementById('dayTitle');
   let node = document.getElementById('dayTitle');
   dateCode(date);
@@ -243,13 +312,12 @@ async function generateBoxScoreDay(date) {
     node.innerHTML += "<h2>No Games Today</h2>"
   } else {
     let games = sortGames(data["dates"][0]["games"]);
-    await generateDayScores(games);
-    for (let i = 0; i < games.length; i++) {
-      if (games[i]["status"]["detailedState"] === "Postponed") {
-        continue;
-      }
-      await generateBoxScore(games[i]["gamePk"]);
-    }
+    generateDayScores(games).then(() => {
+      console.log("Loaded")
+    });
+    generateBoxScoreTeams(games).then(() => {
+      console.log("Loaded")
+    });
   }
 }
 
@@ -304,17 +372,16 @@ function main() {
     window.open("./","_self");
   }
   generateBoxScoreDay(date).then(() => {
-    console.log("day loaded");
+    console.log("Loaded");
   });
 }
 
 // used for testing
 function mockMain() {
   generateBoxScoreDay("2023-09-15").then(() => {
-    console.log("day loaded");
+    console.log("Loaded");
   });
 }
 
 main();
 // mockMain();
-
