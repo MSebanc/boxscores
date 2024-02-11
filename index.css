@@ -102,14 +102,20 @@ button {
     background-color: #eeeeee;
 }
 
+#scoreboard {
+    display: flex;
+    flex-flow: row wrap;
+    flex-direction: row;
+
+}
+
 .teamScoreboard {
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
+    margin-top: 3px;
 }
 
 a {
     text-decoration: none;
 }
 
-.favScore div {
-    display: inline-block;
-}
