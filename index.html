@@ -14,13 +14,12 @@
     window.open("./?date=" + document.querySelector('input[type="date"]').value,"_self");
   }
 
-  // Get the button:
-  let node = document.getElementById("up");
-
   // When the user scrolls down 20px from the top of the document, show the button
   window.onscroll = function() {scrollFunction()};
 
   function scrollFunction() {
+    // Get the button:
+    let node = document.getElementById("up");
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
       node.style.display = "block";
     } else {
