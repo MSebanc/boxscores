@@ -6,6 +6,10 @@ function getSchedule(date) {
   return fetch(`https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&date=${date}`);
 }
 
+function getlinescore(gamePk) {
+  return fetch(`https://statsapi.mlb.com/api/v1/game/${gamePk}/linescore`);
+}
+
 function getPitcherBoxScore(team, data) {
   let tableCode = "<table class='boxscore'><thead><tr><th class='name noLeftBorder' style='text-align: left'>" + data["teams"][team]["team"]["name"] + " Pitchers</th> ";
   tableCode += "<th>IP</th> <th>H</th> <th>R</th> <th>ER</th> <th>BB</th> <th>K</th> <th>HR</th> <th>ERA</th></tr></thead><tbody>";
@@ -150,34 +154,59 @@ function getGameTitle(data) {
   return titleCode;
 }
 
-function getGameLinescore(data, homeTeam, awayTeam) {
+function getGameLinescore(data, homeTeam, awayTeam, gameState) {
+  let num_innings = Math.max(data["innings"].length, data["scheduledInnings"])
   let linescoreCode = "<table class='linescore'><thead><tr><th class='noLeftBorder'></th>";
-  for (let i = 0; i < data["innings"].length; i++) {
-    linescoreCode += "<th>" + data["innings"][i]["num"] + "</th>"
+  for (let i = 0; i < num_innings; i++) {
+    linescoreCode += "<th>" + (i + 1).toString() + "</th>"
   }
-  linescoreCode += "<th>R</th><th>H</th><th>E</th></tr></thead><tbody>";
+  linescoreCode += "<th class='strongLeftBorder'>R</th><th>H</th><th>E</th></tr></thead><tbody>";
   linescoreCode += "<tr><td class='noLeftBorder' style='text-align: left'>" + awayTeam + "</td>";
-  for (let i = 0; i < data["innings"].length; i++) {
-    if ("runs" in data["innings"][i]["away"]) {
-      linescoreCode += "<td>" + data["innings"][i]["away"]["runs"] + "</td>";
-    } else {
+  for (let i = 0; i < num_innings; i++) {
+    let makeGray = "";
+    if (gameState !== "F" && data["currentInning"] === i + 1 && data["isTopInning"]) {
+      makeGray = " class='gray'";
+    }
+    if (i < data["innings"].length && "runs" in data["innings"][i]["away"]) {
+      linescoreCode += "<td"+ makeGray +">" + data["innings"][i]["away"]["runs"] + "</td>";
+    } else if (gameState === "F") {
       linescoreCode += "<td> X </td>";
-    }
-  }
-  linescoreCode += "<td>" + data["teams"]["away"]["runs"] + "</td>";
-  linescoreCode += "<td>" + data["teams"]["away"]["hits"] + "</td>";
-  linescoreCode += "<td>" + data["teams"]["away"]["errors"] + "</td></tr>";
-  linescoreCode += "<tr><td class='noLeftBorder noBottomBorder' style='text-align: left'>" + homeTeam + "</td>";
-  for (let i = 0; i < data["innings"].length; i++) {
-    if ("runs" in data["innings"][i]["home"]) {
-      linescoreCode += "<td class='noBottomBorder'>" + data["innings"][i]["home"]["runs"] + "</td>";
     } else {
-      linescoreCode += "<td class='noBottomBorder'> X </td>";
+      linescoreCode += "<td"+ makeGray +"> &nbsp </td>";
     }
   }
-  linescoreCode += "<td class='noBottomBorder'>" + data["teams"]["home"]["runs"] + "</td>";
-  linescoreCode += "<td class='noBottomBorder'>" + data["teams"]["home"]["hits"] + "</td>";
-  linescoreCode += "<td class='noBottomBorder'>" + data["teams"]["home"]["errors"] + "</td></tr></tbody></table><br>";
+  if ("runs" in data["teams"]["away"] && "hits" in data["teams"]["away"] && "errors" in data["teams"]["away"]) {
+    linescoreCode += "<td class='strongLeftBorder'>" + data["teams"]["away"]["runs"] + "</td>";
+    linescoreCode += "<td>" + data["teams"]["away"]["hits"] + "</td>";
+    linescoreCode += "<td>" + data["teams"]["away"]["errors"] + "</td></tr>";
+  } else {
+    linescoreCode += "<td class='strongLeftBorder'> &nbsp </td>";
+    linescoreCode += "<td> &nbsp </td>";
+    linescoreCode += "<td> &nbsp </td></tr>";
+  }
+  linescoreCode += "<tr><td class='noLeftBorder noBottomBorder' style='text-align: left'>" + homeTeam + "</td>";
+  for (let i = 0; i < num_innings; i++) {
+    let makeGray = "";
+    if (gameState !== "F" && data["currentInning"] === i + 1 && !data["isTopInning"]) {
+      makeGray = " gray";
+    }
+    if (i < data["innings"].length && "runs" in data["innings"][i]["home"]) {
+      linescoreCode += "<td class='noBottomBorder"+ makeGray +"'>" + data["innings"][i]["home"]["runs"] + "</td>";
+    } else if (gameState === "F") {
+      linescoreCode += "<td class='noBottomBorder'> X </td>";
+    } else {
+        linescoreCode += "<td class='noBottomBorder"+ makeGray +"'> &nbsp </td>";
+    }
+  }
+  if ("runs" in data["teams"]["home"] && "hits" in data["teams"]["home"] && "errors" in data["teams"]["home"]) {
+    linescoreCode += "<td class='noBottomBorder strongLeftBorder'>" + data["teams"]["home"]["runs"] + "</td>";
+    linescoreCode += "<td class='noBottomBorder'>" + data["teams"]["home"]["hits"] + "</td>";
+    linescoreCode += "<td class='noBottomBorder'>" + data["teams"]["home"]["errors"] + "</td></tr></tbody></table><br>";
+  } else {
+    linescoreCode += "<td class='noBottomBorder strongLeftBorder'> &nbsp </td>";
+    linescoreCode += "<td class='noBottomBorder'> &nbsp </td>";
+    linescoreCode += "<td class='noBottomBorder'> &nbsp </td></tr></tbody></table><br>";
+  }
 
   return linescoreCode;
 }
@@ -188,7 +217,8 @@ function generateBoxScore(data) {
   boxscoreCode += getGameLinescore(
       data["liveData"]["linescore"],
       data["gameData"]["teams"]["home"]["name"],
-      data["gameData"]["teams"]["away"]["name"]);
+      data["gameData"]["teams"]["away"]["name"],
+      data["gameData"]["status"]["abstractGameCode"]);
   boxscoreCode += getBatterBoxScore("away", data["liveData"]["boxscore"]);
   boxscoreCode += getBattingNotes("away", data["liveData"]["boxscore"]);
   boxscoreCode += getTeamBatFieldInfo("away", data["liveData"]["boxscore"]);
@@ -203,11 +233,25 @@ function generateBoxScore(data) {
   return boxscoreCode;
 }
 
-async function generateTeamScore(game) {
+async function generateTeamScore(game, linescore) {
   return new Promise((resolve) => {
     let teamBoxCode = "";
     let promisesAPI = [];
     let promisesJSON = [];
+    console.log(game);
+    let inningsMessage = game["status"]["detailedState"];
+    if (game["status"]["abstractGameCode"] === "L") {
+      if (linescore["inningState"] === "Middle") {
+        inningsMessage = "Mid " + linescore["currentInning"];
+      } else if (linescore["isTopInning"]) {
+        inningsMessage = "Top " + linescore["currentInning"];
+      } else {
+        inningsMessage = "Bot " + linescore["currentInning"];
+      }
+    }
+    if (inningsMessage === "Completed Early") {
+      inningsMessage = "Final/" + linescore["currentInning"];
+    }
     let awayTeamName = game["teams"]["away"]["team"]["name"];
     promisesAPI.push(fetch("https://statsapi.mlb.com" + game["teams"]["away"]["team"]["link"]));
     promisesAPI.push(fetch("https://statsapi.mlb.com" + game["teams"]["home"]["team"]["link"]));
@@ -230,12 +274,14 @@ async function generateTeamScore(game) {
         teamBoxCode+= "<a class='scoreboardLink' href='#" + game["gamePk"] + "'>"
             + "<div class='score'><table><tbody>";
         teamBoxCode += "<tr><td>" + awayTeam["teams"][0]["abbreviation"] + "</td><td>";
-        if (game["status"]["detailedState"] !== "Postponed") {
+        if ((game["status"]["abstractGameCode"] === "F" || game["status"]["abstractGameCode"] === "L")
+            && game["status"]["detailedState"] !== "Postponed") {
           teamBoxCode += game["teams"]["away"]["score"];
         }
-        teamBoxCode += "</td><td>" + game["status"]["detailedState"] + "</td></tr>";
+        teamBoxCode += "</td><td>" + inningsMessage + "</td></tr>";
         teamBoxCode += "<tr><td>" + homeTeam["teams"][0]["abbreviation"] + "</td><td>";
-        if (game["status"]["detailedState"] === "Postponed") {
+        if ((game["status"]["abstractGameCode"] !== "F" && game["status"]["abstractGameCode"] !== "L")
+            || game["status"]["detailedState"] === "Postponed") {
           teamBoxCode += "</td>"
         } else {
           teamBoxCode += game["teams"]["home"]["score"];
@@ -251,24 +297,28 @@ async function generateDayScores(games) {
   const goodTeams = ["Boston Red Sox", "Chicago Cubs", "Kansas City Royals", "Seattle Mariners"];
   let node = document.getElementById('scoreboard');
   for (let i = 0; i < games.length; i++) {
-    if (goodTeams.includes(games[i]["teams"]["home"]["team"]["name"])) {
-      generateTeamScore(games[i]).then((res) => {
-        let id = games[i]["teams"]["home"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
-        let teamNode = document.getElementById(id);
-        teamNode.innerHTML += "" + res;
-        node = document.getElementById('scoreboard');
-      });
-    } else if (goodTeams.includes(games[i]["teams"]["away"]["team"]["name"])) {
-      generateTeamScore(games[i]).then((res) => {
-        let id = games[i]["teams"]["away"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
-        let teamNode = document.getElementById(id);
-        teamNode.innerHTML += "" + res;
-      });
-    } else {
-      generateTeamScore(games[i]).then((res) => {
-        node.innerHTML += "<div class='teamScoreboard'>" + res + "</div>";
-      });
-    }
+    getlinescore(games[i]["gamePk"]).then((res) => {
+      return res.json();
+    }).then((linescore) => {
+      if (goodTeams.includes(games[i]["teams"]["home"]["team"]["name"])) {
+          generateTeamScore(games[i], linescore).then((res) => {
+            let id = games[i]["teams"]["home"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
+            let teamNode = document.getElementById(id);
+            teamNode.innerHTML += "" + res;
+            node = document.getElementById('scoreboard');
+          });
+      } else if (goodTeams.includes(games[i]["teams"]["away"]["team"]["name"])) {
+        generateTeamScore(games[i], linescore).then((res) => {
+          let id = games[i]["teams"]["away"]["team"]["name"].replace(/\s+/g, '') + "Scoreboard";
+          let teamNode = document.getElementById(id);
+          teamNode.innerHTML += "" + res;
+        });
+      } else {
+        generateTeamScore(games[i], linescore).then((res) => {
+          node.innerHTML += "<div class='teamScoreboard'>" + res + "</div>";
+        });
+      }
+    });
   }
 }
 

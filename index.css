@@ -154,3 +154,11 @@ a {
     border-left-width: 1px;
     padding: 3px 4px;
 }
+
+.gray {
+    background-color: rgba(221,221,221,0.33);
+}
+
+.strongLeftBorder {
+    border-left: 1px solid #a1a1a1 !important;
+}
