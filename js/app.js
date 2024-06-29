@@ -380,25 +380,44 @@ async function generateBoxScoreDay(date) {
   }
 }
 
-function getDateToday() {
-  let curDate = new Date();
-  let month = curDate.getMonth() + 1;
+function getDateString(date) {
+  let month = date.getUTCMonth() + 1;
   if (month < 10) {
     month = "0" + month.toString();
   }
-  let day = curDate.getDate();
+  let day = date.getUTCDate();
   if (day < 10) {
     day = "0" + day.toString();
   }
-  return curDate.getFullYear() + "-" + month + "-" + day;
+  return date.getUTCFullYear() + "-" + month + "-" + day;
+}
+
+function getDateToday() {
+  let date = new Date();
+  let month = date.getMonth() + 1;
+  if (month < 10) {
+    month = "0" + month.toString();
+  }
+  let day = date.getDate();
+  if (day < 10) {
+    day = "0" + day.toString();
+  }
+  return date.getFullYear() + "-" + month + "-" + day;
 }
 
 function dateCode(date) {
   let maxDate = getDateToday();
+  let curPageDay = new Date(date);
+  let prevDay = new Date(curPageDay.getTime() - (24 * 60 * 60 * 1000));
+  let nextDay = new Date(curPageDay.getTime() + (24 * 60 * 60 * 1000));
   let node = document.getElementById('date');
   let dateCode = "<form action=javascript:handleDateSelect()>";
-  dateCode += "<input type='date' id='dateSelect' name='dateSelect' value='" + date + "' max='" + maxDate + "' />"
-  dateCode += "<button>Submit</button></form>"
+  dateCode += `<a href="./?date=${getDateString(prevDay)}" class="previous round">&#8249;</a>`;
+  dateCode += "<input type='date' id='dateSelect' name='dateSelect' value='" + date + "' max='" + maxDate + "' />";
+  if (date.localeCompare(maxDate) !== 0) {
+    dateCode += `<a href="./?date=${getDateString(nextDay)}" class="next round">&#8250;</a>`;
+  }
+  dateCode += "<button>Submit</button></form>";
   node.innerHTML = dateCode;
   node = document.getElementById('title');
   node.innerHTML = "Box Scores " + date;
