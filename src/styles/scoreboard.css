@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+.scoreboard {
+    background-color: #ffffff;
+    padding: 0;
+    margin: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.scoreboard::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+}
+
+.scoreboard::-webkit-scrollbar-thumb {
+    background-color: #b3b3b3;
+    border-radius: 10px;
+    border: 3px solid #f0f0f0;
+}
+
+.scoreboard::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scoreboard::-webkit-scrollbar-thumb:hover {
+    background-color: #999999;
+}
+
+.row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+}
+
+.score-box {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    background-color: #f8f9fa;
+    color: #343a40;
+    width: 180px;
+    height: 100px;
+    margin: 10px auto;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(173, 216, 230, 0.2);
+    transition: all 0.2s ease-in-out;
+    font-size: 1rem;
+    padding: 10px;
+    line-height: 1.5;
+}
+
+.score-box table {
+    width: 100%;
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 10px 3px;
+}
+
+.score-box td {
+    white-space: nowrap;
+    text-align: left;
+    padding: 2px;
+}
+
+.score-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .score-box {
+        width: 150px;
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+}
+
+.score-box td .center {
+    text-align: center;
+}
