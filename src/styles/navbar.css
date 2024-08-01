@@ -42,3 +42,37 @@
 .date-picker .rs-picker-toggle-default:hover {
     background-color: #4169E1;
 }
+
+.button .short-text {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .nav {
+        padding: 5px 10px;
+    }
+
+    .button {
+        padding: 5px 10px;
+        min-width: 80px;
+        max-width: 80px;
+        min-height: 25px;
+        max-height: 40px;
+    }
+
+    .button .full-text {
+        display: none;
+    }
+
+    .button .short-text {
+        display: inline;
+    }
+
+    .date-picker .rs-picker-toggle-default {
+        padding: 5px 10px;
+        min-width: 80px;
+        max-width: 80px;
+        min-height: 25px;
+        max-height: 40px;
+    }
+}

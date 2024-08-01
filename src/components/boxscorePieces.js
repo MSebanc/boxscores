@@ -6,11 +6,14 @@ function BoxScoreTitle({ data }) {
     if (!data) return <div></div>;
     return (
         <Panel className='title' shaded>
-            <h1>{data["teams"]["away"]["team"]["name"]} @ {data["teams"]["home"]["team"]["name"]}</h1>
+            <h1>
+                {data["teams"]["away"]["team"]["name"]}
+                <div className="at-symbol">{" @ "}</div>
+                {data["teams"]["home"]["team"]["name"]}
+            </h1>
             <h2>{data["teams"]["away"]["teamStats"]["batting"]["runs"]} - {data["teams"]["home"]["teamStats"]["batting"]["runs"]}</h2>
         </Panel>
     );
-
 }
 
 function BattingNotes({ team }) {

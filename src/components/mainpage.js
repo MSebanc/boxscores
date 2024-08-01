@@ -29,11 +29,17 @@ function MainPage() {
         }
     }, [params.date, navigate]);
 
-    useEffect(() => {
+    const updatePaddingTop = () => {
         if (navbarRef.current && mainPageRef.current) {
             const navbarHeight = navbarRef.current.offsetHeight;
             mainPageRef.current.style.paddingTop = `${navbarHeight + 5}px`;
         }
+    };
+
+    useEffect(() => {
+        updatePaddingTop();
+        window.addEventListener('resize', updatePaddingTop);
+        return () => window.removeEventListener('resize', updatePaddingTop);
     }, []);
 
     const { data, loading, error } = useSchedule(date);

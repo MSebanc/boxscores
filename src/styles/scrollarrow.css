@@ -40,3 +40,11 @@
 .scroll-to-top:hover .fa-arrow-up {
     animation: bounce 2s infinite;
 }
+
+@media (max-width: 600px) {
+    .scroll-to-top {
+        width: 60px;
+        height: 60px;
+        line-height: 40px;
+    }
+}
