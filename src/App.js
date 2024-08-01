@@ -3,7 +3,7 @@ import MainPage from './components/mainpage';
 
 function App() {
     return (
-        <Router>
+        <Router basename="/boxscores">
             <Routes>
                 <Route path="/:date" element={<MainPage />}/>
                 <Route path="/" element={<MainPage />}/>
