@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/boxscores/static/css/main.9e5d91c5.css",
+    "main.js": "/boxscores/static/js/main.bd560b19.js",
+    "static/js/453.a62aaef0.chunk.js": "/boxscores/static/js/453.a62aaef0.chunk.js",
+    "index.html": "/boxscores/index.html",
+    "main.9e5d91c5.css.map": "/boxscores/static/css/main.9e5d91c5.css.map",
+    "main.bd560b19.js.map": "/boxscores/static/js/main.bd560b19.js.map",
+    "453.a62aaef0.chunk.js.map": "/boxscores/static/js/453.a62aaef0.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9e5d91c5.css",
+    "static/js/main.bd560b19.js"
+  ]
+}
