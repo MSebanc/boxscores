@@ -4,14 +4,39 @@ import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const APP_CONFIG = {
+    rootElementId: 'root',
+    strictMode: true,
+    performanceLogging: false
+};
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const createRootElement = (elementId) =>
+    ReactDOM.createRoot(document.getElementById(elementId));
+
+const renderApp = (root, Component, enableStrictMode = true) => {
+    const AppElement = enableStrictMode ? (
+        <React.StrictMode>
+            <Component />
+        </React.StrictMode>
+    ) : (
+        <Component />
+    );
+
+    root.render(AppElement);
+};
+
+const initializePerformanceLogging = (shouldLog = false) => {
+    if (shouldLog) {
+        reportWebVitals(console.log);
+    } else {
+        reportWebVitals();
+    }
+};
+
+const initializeApp = () => {
+    const root = createRootElement(APP_CONFIG.rootElementId);
+    renderApp(root, App, APP_CONFIG.strictMode);
+    initializePerformanceLogging(APP_CONFIG.performanceLogging);
+};
+
+initializeApp();

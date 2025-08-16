@@ -1,34 +1,72 @@
-h1 {
-    text-align: center;
-    font-size: 60px;
-    text-transform: uppercase;
-    color: #001956;
-    letter-spacing: 2px;
-    font-family: "Raleway", sans-serif;
-    font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+/* ===== CSS VARIABLES ===== */
+:root {
+    /* Colors */
+    --title-primary-color: #001956;
+    --title-secondary-color: #4169E1;
+    --title-accent-color: #6495ED;
+    --title-bg-color: #f8f8f8;
+    --title-shadow-color: rgba(0, 0, 0, 0.1);
+
+    /* Typography */
+    --title-font-family: "Raleway", sans-serif;
+    --title-font-size: 60px;
+    --title-font-weight: 700;
+    --subtitle-font-size: 30px;
+
+    /* Spacing */
+    --title-letter-spacing: 2px;
+    --subtitle-word-spacing: 1px;
+    --subtitle-letter-spacing: 2px;
+    --subtitle-margin-top: 5px;
+    --subtitle-grid-gap: 20px;
+
+    /* Effects */
+    --title-text-shadow: 2px 2px 4px var(--title-shadow-color);
+
+    /* Grid Layout */
+    --subtitle-grid-columns: 1fr max-content 1fr;
+    --subtitle-grid-rows: 27px 0;
+
+    /* Decorative Lines */
+    --line-border-width: 1px;
+    --line-height: 5px;
 }
 
-h1 span {
-    margin-top: 5px;
-    font-size: 30px;
-    color: #4169E1;
-    word-spacing: 1px;
-    letter-spacing: 2px;
+/* ===== MAIN TITLE (H1) ===== */
+h1 {
+    text-align: center;
+    font-size: var(--title-font-size);
     text-transform: uppercase;
-    font-family: "Raleway", sans-serif;
+    color: var(--title-primary-color);
+    letter-spacing: var(--title-letter-spacing);
+    font-family: var(--title-font-family), sans-serif;
+    font-weight: var(--title-font-weight);
+    text-shadow: var(--title-text-shadow);
+}
+
+/* ===== SUBTITLE (H1 SPAN) ===== */
+h1 span {
+    margin-top: var(--subtitle-margin-top);
+    font-size: var(--subtitle-font-size);
+    color: var(--title-secondary-color);
+    word-spacing: var(--subtitle-word-spacing);
+    letter-spacing: var(--subtitle-letter-spacing);
+    text-transform: uppercase;
+    font-family: var(--title-font-family), sans-serif;
     display: grid;
-    grid-template-columns: 1fr max-content 1fr;
-    grid-template-rows: 27px 0;
-    grid-gap: 20px;
+    grid-template-columns: var(--subtitle-grid-columns);
+    grid-template-rows: var(--subtitle-grid-rows);
+    grid-gap: var(--subtitle-grid-gap);
     align-items: center;
 }
 
-h1 span:after, h1 span:before {
+/* ===== DECORATIVE LINES ===== */
+h1 span:after,
+h1 span:before {
     content: " ";
     display: block;
-    border-bottom: 1px solid #6495ED;
-    border-top: 1px solid #6495ED;
-    height: 5px;
-    background-color: #f8f8f8;
+    border-bottom: var(--line-border-width) solid var(--title-accent-color);
+    border-top: var(--line-border-width) solid var(--title-accent-color);
+    height: var(--line-height);
+    background-color: var(--title-bg-color);
 }

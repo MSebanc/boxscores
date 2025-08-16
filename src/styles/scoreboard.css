@@ -1,39 +1,114 @@
+/* ===== CSS VARIABLES ===== */
+:root {
+    /* Colors */
+    --scoreboard-bg: #ffffff;
+    --score-box-bg: #f8f9fa;
+    --score-box-text: #343a40;
+    --score-box-border: #dee2e6;
+    --scrollbar-track: #f0f0f0;
+    --scrollbar-thumb: #b3b3b3;
+    --scrollbar-thumb-hover: #999999;
+    --light-blue-shadow: rgba(173, 216, 230, 0.2);
+    --dark-shadow: rgba(0, 0, 0, 0.1);
+    --dark-shadow-hover: rgba(0, 0, 0, 0.2);
+
+    /* Shadows */
+    --scoreboard-shadow: 0 4px 6px var(--dark-shadow);
+    --score-box-shadow: 0 4px 8px var(--light-blue-shadow);
+    --score-box-shadow-hover: 0 8px 16px var(--dark-shadow-hover);
+
+    /* Border Radius */
+    --scoreboard-border-radius: 12px;
+    --score-box-border-radius: 10px;
+    --scrollbar-border-radius: 10px;
+
+    /* Spacing */
+    --scoreboard-padding: 0;
+    --scoreboard-margin-desktop: 10px 20px;
+    --scoreboard-margin-mobile: 5px 10px;
+    --score-box-padding-desktop: 10px;
+    --score-box-padding-tablet: 8px;
+    --score-box-padding-mobile: 5px;
+    --score-box-margin-desktop: 10px auto;
+    --score-box-margin-mobile: 2px auto;
+    --row-gap-desktop: 10px;
+    --row-gap-mobile: 5px;
+
+    /* Dimensions */
+    --score-box-width-desktop: 180px;
+    --score-box-width-tablet: 150px;
+    --score-box-width-mobile: 110px;
+    --score-box-height-desktop: 100px;
+    --score-box-height-mobile: 80px;
+    --scrollbar-width: 8px;
+    --scrollbar-border: 3px solid var(--scrollbar-track);
+
+    /* Typography */
+    --score-box-font-size-desktop: 1rem;
+    --score-box-font-size-tablet: 0.9rem;
+    --score-box-font-size-mobile: 0.8rem;
+    --score-box-line-height: 1.5;
+
+    /* Border */
+    --score-box-border-width: 2px;
+
+    /* Table Spacing */
+    --table-spacing-desktop: 10px 3px;
+    --table-spacing-mobile: 5px 2px;
+    --table-cell-padding-desktop: 2px;
+    --table-cell-padding-mobile: 1px;
+
+    /* Transitions */
+    --score-box-transition: all 0.2s ease-in-out;
+
+    /* Transform */
+    --score-box-hover-scale: scale(1.05);
+
+    /* Breakpoints */
+    --tablet-breakpoint: 768px;
+    --mobile-breakpoint: 480px;
+}
+
+/* ===== MAIN SCOREBOARD CONTAINER ===== */
 .scoreboard {
-    background-color: #ffffff;
-    padding: 0;
-    margin: 10px 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: var(--scoreboard-bg);
+    padding: var(--scoreboard-padding);
+    margin: var(--scoreboard-margin-desktop);
+    border-radius: var(--scoreboard-border-radius);
+    box-shadow: var(--scoreboard-shadow);
     display: flex;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     flex-wrap: wrap;
 }
 
+/* ===== SCROLLBAR STYLING ===== */
+.scoreboard::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+}
+
 .scoreboard::-webkit-scrollbar-track {
-    background-color: #f0f0f0;
-    border-radius: 10px;
+    background-color: var(--scrollbar-track);
+    border-radius: var(--scrollbar-border-radius);
 }
 
 .scoreboard::-webkit-scrollbar-thumb {
-    background-color: #b3b3b3;
-    border-radius: 10px;
-    border: 3px solid #f0f0f0;
-}
-
-.scoreboard::-webkit-scrollbar {
-    width: 8px;
+    background-color: var(--scrollbar-thumb);
+    border-radius: var(--scrollbar-border-radius);
+    border: var(--scrollbar-border);
 }
 
 .scoreboard::-webkit-scrollbar-thumb:hover {
-    background-color: #999999;
+    background-color: var(--scrollbar-thumb-hover);
 }
 
+/* ===== ROW LAYOUT ===== */
 .row {
     display: flex;
-    gap: 10px;
+    gap: var(--row-gap-desktop);
 }
 
+/* ===== SCORE BOX COMPONENT ===== */
 .score-box {
     flex: 0 0 auto;
     display: flex;
@@ -41,72 +116,72 @@
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    background-color: #f8f9fa;
-    color: #343a40;
-    width: 180px;
-    height: 100px;
-    margin: 10px auto;
-    border: 2px solid #dee2e6;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(173, 216, 230, 0.2);
-    transition: all 0.2s ease-in-out;
-    font-size: 1rem;
-    padding: 10px;
-    line-height: 1.5;
+    background-color: var(--score-box-bg);
+    color: var(--score-box-text);
+    width: var(--score-box-width-desktop);
+    height: var(--score-box-height-desktop);
+    margin: var(--score-box-margin-desktop);
+    border: var(--score-box-border-width) solid var(--score-box-border);
+    border-radius: var(--score-box-border-radius);
+    box-shadow: var(--score-box-shadow);
+    transition: var(--score-box-transition);
+    font-size: var(--score-box-font-size-desktop);
+    padding: var(--score-box-padding-desktop);
+    line-height: var(--score-box-line-height);
 }
 
+.score-box:hover {
+    transform: var(--score-box-hover-scale);
+    box-shadow: var(--score-box-shadow-hover);
+    cursor: pointer;
+}
+
+/* ===== SCORE BOX TABLE ===== */
 .score-box table {
     width: 100%;
     margin: 0;
     border-collapse: separate;
-    border-spacing: 10px 3px;
+    border-spacing: var(--table-spacing-desktop);
 }
 
 .score-box td {
     white-space: nowrap;
     text-align: left;
-    padding: 2px;
+    padding: var(--table-cell-padding-desktop);
 }
 
-.score-box:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    cursor: pointer;
-}
-
+/* ===== TABLET RESPONSIVE ===== */
 @media (max-width: 768px) {
     .score-box {
-        width: 150px;
-        padding: 8px;
-        font-size: 0.9rem;
+        width: var(--score-box-width-tablet);
+        padding: var(--score-box-padding-tablet);
+        font-size: var(--score-box-font-size-tablet);
     }
 }
 
+/* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 480px) {
     .scoreboard {
-        margin: 5px 10px;
+        margin: var(--scoreboard-margin-mobile);
     }
 
     .score-box {
-        width: 110px;
-        height: 80px;
-        padding: 5px;
-        font-size: 0.8rem;
+        width: var(--score-box-width-mobile);
+        height: var(--score-box-height-mobile);
+        padding: var(--score-box-padding-mobile);
+        font-size: var(--score-box-font-size-mobile);
+        margin: var(--score-box-margin-mobile);
     }
 
     .score-box table {
-        border-spacing: 5px 2px;
+        border-spacing: var(--table-spacing-mobile);
     }
 
     .score-box td {
-        padding: 1px;
+        padding: var(--table-cell-padding-mobile);
     }
 
     .row {
-        gap: 5px;
-    }
-
-    .score-box {
-        margin: 2px auto;
+        gap: var(--row-gap-mobile);
     }
 }

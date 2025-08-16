@@ -1,38 +1,65 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useLineScore } from '../utils/apicalls';
 import 'rsuite/dist/rsuite.min.css';
 
-function LineScore({ gamePk, awayTeam, homeTeam, gameState}) {
+const LineScore = ({ gamePk, awayTeam, homeTeam, gameState }) => {
     const { data } = useLineScore(gamePk);
 
-    if (!data) return <div></div>;
+    const tableData = useMemo(() => {
+        if (!data) return null;
 
-    const numInnings = Math.max(data["innings"].length, data["scheduledInnings"])
+        const numInnings = Math.max(data.innings?.length || 0, data.scheduledInnings || 0);
+        const inningsRowsAway = [];
+        const inningsRowsHome = [];
 
-    let inningsRowsAway = [];
-    let inningsRowsHome = [];
+        for (let i = 0; i < numInnings; i++) {
+            let awayClass = "";
+            let homeClass = "";
 
-    for (let i = 0; i < numInnings; i++) {
-        let awayClass = "", homeClass = "";
-        if (gameState !== "F" && data["currentInning"] === i + 1) {
-            if (data["isTopInning"]) {
-                awayClass = "gray";
-            } else {
-                homeClass = "gray";
+            if (gameState !== "F" && data.currentInning === i + 1) {
+                if (data.isTopInning) {
+                    awayClass = "gray";
+                } else {
+                    homeClass = "gray";
+                }
             }
+
+            const inning = data.innings?.[i];
+            const awayRuns = inning?.away?.runs;
+            const homeRuns = inning?.home?.runs;
+
+            const awayRunsElement = awayRuns !== undefined
+                ? <td className={awayClass} key={i}>{awayRuns}</td>
+                : gameState === "F"
+                    ? <td className={awayClass} key={i}>X</td>
+                    : <td className={awayClass} key={i}>&nbsp;</td>;
+
+            const homeRunsElement = homeRuns !== undefined
+                ? <td className={homeClass} key={i}>{homeRuns}</td>
+                : gameState === "F"
+                    ? <td className={homeClass} key={i}>X</td>
+                    : <td className={homeClass} key={i}>&nbsp;</td>;
+
+            inningsRowsAway.push(awayRunsElement);
+            inningsRowsHome.push(homeRunsElement);
         }
 
-        const awayRunsElement = data["innings"][i] && data["innings"][i]["away"]["runs"] !== undefined ?
-            <td className={awayClass} key={i}>{data["innings"][i]["away"]["runs"]}</td> :
-            (gameState === "F" ? <td className={awayClass} key={i}>X</td> : <td className={awayClass} key={i}>&nbsp;</td>);
+        const awayStats = data.teams?.away || {};
+        const homeStats = data.teams?.home || {};
 
-        const homeRunsElement = data["innings"][i] && data["innings"][i]["home"]["runs"] !== undefined ?
-            <td className={homeClass} key={i}>{data["innings"][i]["home"]["runs"]}</td> :
-            (gameState === "F" ? <td className={homeClass} key={i}>X</td> : <td className={homeClass} key={i}>&nbsp;</td>);
+        return {
+            numInnings,
+            inningsRowsAway,
+            inningsRowsHome,
+            awayStats,
+            homeStats
+        };
+    }, [data, gameState]);
 
-        inningsRowsAway.push(awayRunsElement);
-        inningsRowsHome.push(homeRunsElement);
-    }
+    if (!tableData) return <div></div>;
+
+    const { numInnings, inningsRowsAway, inningsRowsHome, awayStats, homeStats } = tableData;
+
     return (
         <table className="line-score-table">
             <thead>
@@ -50,20 +77,20 @@ function LineScore({ gamePk, awayTeam, homeTeam, gameState}) {
             <tr>
                 <td>{awayTeam}</td>
                 {inningsRowsAway}
-                <td>{data["teams"]["away"]["runs"] !== undefined ? data["teams"]["away"]["runs"] : <span>&nbsp;</span>}</td>
-                <td>{data["teams"]["away"]["hits"] !== undefined ? data["teams"]["away"]["hits"] : <span>&nbsp;</span>}</td>
-                <td>{data["teams"]["away"]["errors"] !== undefined ? data["teams"]["away"]["errors"] : <span>&nbsp;</span>}</td>
+                <td>{awayStats.runs ?? <span>&nbsp;</span>}</td>
+                <td>{awayStats.hits ?? <span>&nbsp;</span>}</td>
+                <td>{awayStats.errors ?? <span>&nbsp;</span>}</td>
             </tr>
             <tr>
                 <td>{homeTeam}</td>
                 {inningsRowsHome}
-                <td>{data["teams"]["home"]["runs"] !== undefined ? data["teams"]["home"]["runs"] : <span>&nbsp;</span>}</td>
-                <td>{data["teams"]["home"]["hits"] !== undefined ? data["teams"]["home"]["hits"] : <span>&nbsp;</span>}</td>
-                <td>{data["teams"]["home"]["errors"] !== undefined ? data["teams"]["home"]["errors"] : <span>&nbsp;</span>}</td>
+                <td>{homeStats.runs ?? <span>&nbsp;</span>}</td>
+                <td>{homeStats.hits ?? <span>&nbsp;</span>}</td>
+                <td>{homeStats.errors ?? <span>&nbsp;</span>}</td>
             </tr>
             </tbody>
         </table>
     );
-}
+};
 
-export default LineScore;
+export default React.memo(LineScore);

@@ -1,38 +1,40 @@
+/* ===== CSS VARIABLES ===== */
+:root {
+  /* Colors */
+  --app-bg-dark: #282c34;
+  --app-text-light: white;
+  --app-link-blue: #61dafb;
+
+  /* Layout */
+  --app-logo-size: 40vmin;
+  --app-font-size: calc(10px + 2vmin);
+  --app-min-height: 100vh;
+}
+
+/* ===== MAIN APP COMPONENT ===== */
 .App {
   text-align: center;
 }
 
+/* ===== LOGO STYLES ===== */
 .App-logo {
-  height: 40vmin;
+  height: var(--app-logo-size);
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
+/* ===== HEADER SECTION ===== */
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: var(--app-bg-dark);
+  min-height: var(--app-min-height);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-size: var(--app-font-size);
+  color: var(--app-text-light);
 }
 
+/* ===== LINK STYLING ===== */
 .App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  color: var(--app-link-blue);
 }

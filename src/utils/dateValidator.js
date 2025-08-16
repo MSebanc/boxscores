@@ -1,31 +1,69 @@
-function isValidDate(date) {
-    if (typeof date !== 'string') return false;
-    let regEx = /^\d{4}-\d{2}-\d{2}$/;
-    if(!date.match(regEx)) return false;
-    let curDate = new Date(date);
-    let today = new Date();
-    if (curDate.getUTCFullYear() > today.getFullYear()) return false;
-    if (curDate.getFullYear() === today.getFullYear()) {
-        if (curDate.getUTCMonth() > today.getMonth()) return false;
-        if (curDate.getUTCMonth() === today.getMonth() && curDate.getUTCDate() > today.getDate()) return false;
+const DATE_CONFIG = {
+    regex: /^\d{4}-\d{2}-\d{2}$/,
+    dateFormat: {
+        yearIndex: 0,
+        monthIndex: 1,
+        dayIndex: 2,
+        separator: '-'
+    },
+    validation: {
+        minPadding: 10,
+        paddingPrefix: '0'
     }
-    let dNum = curDate.getTime();
-    if(!dNum && dNum !== 0) return false;
-    if (isNaN(curDate.getTime())) return false;
-    return curDate.toISOString().slice(0,10) === date;
+};
+
+const createDateFromString = (dateString) => new Date(dateString);
+const getCurrentDate = () => new Date();
+const formatDateComponent = (component) =>
+    component < DATE_CONFIG.validation.minPadding
+        ? DATE_CONFIG.validation.paddingPrefix + component.toString()
+        : component.toString();
+
+const isValidDateFormat = (date) => {
+    if (typeof date !== 'string') return false;
+    return DATE_CONFIG.regex.test(date);
+};
+
+const isDateInFuture = (targetDate, referenceDate = getCurrentDate()) => {
+    if (targetDate.getUTCFullYear() > referenceDate.getFullYear()) return true;
+
+    if (targetDate.getFullYear() === referenceDate.getFullYear()) {
+        if (targetDate.getUTCMonth() > referenceDate.getMonth()) return true;
+        if (targetDate.getUTCMonth() === referenceDate.getMonth() &&
+            targetDate.getUTCDate() > referenceDate.getDate()) return true;
+    }
+
+    return false;
+};
+
+const isValidDateObject = (dateObj) => {
+    const timeValue = dateObj.getTime();
+    return (timeValue || timeValue === 0) && !isNaN(timeValue);
+};
+
+const doesDateMatchOriginalString = (dateObj, originalString) => {
+    return dateObj.toISOString().slice(0, 10) === originalString;
+};
+
+function isValidDate(date) {
+    if (!isValidDateFormat(date)) return false;
+
+    const parsedDate = createDateFromString(date);
+    const today = getCurrentDate();
+
+    if (isDateInFuture(parsedDate, today)) return false;
+    if (!isValidDateObject(parsedDate)) return false;
+
+    return doesDateMatchOriginalString(parsedDate, date);
 }
 
 function getDateStringToday() {
-    let date = new Date();
-    let month = date.getMonth() + 1;
-    if (month < 10) {
-        month = "0" + month.toString();
-    }
-    let day = date.getDate();
-    if (day < 10) {
-        day = "0" + day.toString();
-    }
-    return date.getFullYear() + "-" + month + "-" + day;
+    const date = getCurrentDate();
+    const year = date.getFullYear();
+    const month = formatDateComponent(date.getMonth() + 1);
+    const day = formatDateComponent(date.getDate());
+
+    return `${year}${DATE_CONFIG.dateFormat.separator}${month}${DATE_CONFIG.dateFormat.separator}${day}`;
 }
 
-export { isValidDate, getDateStringToday};
+export { isValidDate, getDateStringToday };

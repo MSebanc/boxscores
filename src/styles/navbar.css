@@ -1,63 +1,107 @@
+/* ===== CSS VARIABLES ===== */
+:root {
+    /* Colors */
+    --nav-bg-color: #f5f5f5;
+    --nav-border-color: #e0e0e0;
+    --button-primary: #6495ED;
+    --button-primary-hover: #4169E1;
+    --button-text: white;
+
+    /* Shadows */
+    --nav-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    /* Spacing */
+    --nav-padding-desktop: 10px 20px;
+    --nav-padding-mobile: 5px 10px;
+    --button-padding-desktop: 10px 20px;
+    --button-padding-mobile: 5px 10px;
+
+    /* Sizing */
+    --button-width-desktop: 120px;
+    --button-width-mobile: 80px;
+    --button-height-desktop-min: 30px;
+    --button-height-desktop-max: 50px;
+    --button-height-mobile-min: 25px;
+    --button-height-mobile-max: 40px;
+
+    /* Border Radius */
+    --button-border-radius: 4px;
+
+    /* Transitions */
+    --button-transition: background-color 0.3s ease;
+
+    /* Z-index */
+    --nav-z-index: 100;
+
+    /* Breakpoints */
+    --mobile-breakpoint: 600px;
+}
+
+/* ===== NAVIGATION BAR ===== */
 .nav {
     position: fixed;
     top: 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 10px 20px;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: var(--nav-padding-desktop);
+    background-color: var(--nav-bg-color);
+    border-bottom: 1px solid var(--nav-border-color);
+    box-shadow: var(--nav-shadow);
     box-sizing: border-box;
-    z-index: 100;
+    z-index: var(--nav-z-index);
 }
 
+/* ===== BUTTON STYLES ===== */
 .button {
-    padding: 10px 20px;
-    background-color: #6495ED;
-    color: white;
+    padding: var(--button-padding-desktop);
+    background-color: var(--button-primary);
+    color: var(--button-text);
     border: none;
     cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-    min-width: 120px;
-    max-width: 120px;
-    min-height: 30px;
-    max-height: 50px;
+    border-radius: var(--button-border-radius);
+    transition: var(--button-transition);
+    min-width: var(--button-width-desktop);
+    max-width: var(--button-width-desktop);
+    min-height: var(--button-height-desktop-min);
+    max-height: var(--button-height-desktop-max);
 }
 
 .button:hover {
-    background-color: #4169E1;
+    background-color: var(--button-primary-hover);
 }
 
+/* ===== DATE PICKER STYLES ===== */
 .date-picker .rs-picker-toggle-default {
-    background-color: #6495ED;
-    color: white;
+    background-color: var(--button-primary);
+    color: var(--button-text);
     border: none;
     cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    border-radius: var(--button-border-radius);
+    transition: var(--button-transition);
 }
 
 .date-picker .rs-picker-toggle-default:hover {
-    background-color: #4169E1;
+    background-color: var(--button-primary-hover);
 }
 
+/* ===== TEXT VISIBILITY ===== */
 .button .short-text {
     display: none;
 }
 
+/* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 600px) {
     .nav {
-        padding: 5px 10px;
+        padding: var(--nav-padding-mobile);
     }
 
     .button {
-        padding: 5px 10px;
-        min-width: 80px;
-        max-width: 80px;
-        min-height: 25px;
-        max-height: 40px;
+        padding: var(--button-padding-mobile);
+        min-width: var(--button-width-mobile);
+        max-width: var(--button-width-mobile);
+        min-height: var(--button-height-mobile-min);
+        max-height: var(--button-height-mobile-max);
     }
 
     .button .full-text {
@@ -69,10 +113,10 @@
     }
 
     .date-picker .rs-picker-toggle-default {
-        padding: 5px 10px;
-        min-width: 80px;
-        max-width: 80px;
-        min-height: 25px;
-        max-height: 40px;
+        padding: var(--button-padding-mobile);
+        min-width: var(--button-width-mobile);
+        max-width: var(--button-width-mobile);
+        min-height: var(--button-height-mobile-min);
+        max-height: var(--button-height-mobile-max);
     }
 }

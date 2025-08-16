@@ -1,12 +1,29 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainPage from './components/mainpage';
 
+const ROUTER_CONFIG = {
+    basename: '/boxscores',
+    routes: [
+        { path: '/:date', component: MainPage },
+        { path: '/', component: MainPage }
+    ]
+};
+
+const createRoute = (route, index) => (
+    <Route
+        key={index}
+        path={route.path}
+        element={<route.component />}
+    />
+);
+
+const renderRoutes = (routes) => routes.map(createRoute);
+
 function App() {
     return (
-        <Router basename="/boxscores">
+        <Router basename={ROUTER_CONFIG.basename}>
             <Routes>
-                <Route path="/:date" element={<MainPage />}/>
-                <Route path="/" element={<MainPage />}/>
+                {renderRoutes(ROUTER_CONFIG.routes)}
             </Routes>
         </Router>
     );

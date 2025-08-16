@@ -1,37 +1,57 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Panel, Col, Placeholder } from 'rsuite';
 import { useLineScore, useTeamInfo } from "../utils/apicalls";
 import 'rsuite/dist/rsuite.min.css';
 import '../styles/scoreboard.css';
 
 function getInningsMessage(status, lineScore) {
-    let inningsMessage = status["detailedState"];
-    if (inningsMessage === "Suspended") return inningsMessage;
-    if (status["abstractGameCode"] === "L") {
-        if (lineScore["inningState"] === "Middle") {
-            inningsMessage = "Mid " + lineScore["currentInning"];
-        } else if (lineScore["isTopInning"]) {
-            inningsMessage = "Top " + lineScore["currentInning"];
+    const detailedState = status?.detailedState;
+    if (detailedState === "Suspended") return detailedState;
+
+    if (status?.abstractGameCode === "L") {
+        const currentInning = lineScore?.currentInning;
+        if (lineScore?.inningState === "Middle") {
+            return `Mid ${currentInning}`;
+        } else if (lineScore?.isTopInning) {
+            return `Top ${currentInning}`;
         } else {
-            inningsMessage = "Bot " + lineScore["currentInning"];
+            return `Bot ${currentInning}`;
         }
     }
-    if (inningsMessage === "Completed Early") {
-        inningsMessage = "Final/" + lineScore["currentInning"];
+
+    if (detailedState === "Completed Early") {
+        return `Final/${lineScore?.currentInning}`;
     }
 
-    return inningsMessage;
+    return detailedState;
 }
 
-function ScoreBox({ game, navbarHeight }) {
-    const { data } = useLineScore(game["gamePk"]);
-    const homeTeam = useTeamInfo(game["teams"]["home"]["team"]["id"]);
-    const awayTeam = useTeamInfo(game["teams"]["away"]["team"]["id"]);
+const ScoreBox = ({ game, navbarHeight }) => {
+    const gamePk = game?.gamePk;
+    const homeTeamId = game?.teams?.home?.team?.id;
+    const awayTeamId = game?.teams?.away?.team?.id;
 
-    let inningsMessage = game && data ? getInningsMessage(game["status"], data) : null;
+    const { data } = useLineScore(gamePk);
+    const homeTeam = useTeamInfo(homeTeamId);
+    const awayTeam = useTeamInfo(awayTeamId);
 
-    const handleClick = () => {
-        const element = document.getElementById(game["gamePk"]);
+    const inningsMessage = useMemo(() => {
+        return game && data ? getInningsMessage(game.status, data) : null;
+    }, [game, data]);
+
+    const teamScores = useMemo(() => ({
+        away: game?.teams?.away?.score,
+        home: game?.teams?.home?.score
+    }), [game?.teams?.away?.score, game?.teams?.home?.score]);
+
+    const teamAbbreviations = useMemo(() => ({
+        away: awayTeam.data?.teams?.[0]?.abbreviation,
+        home: homeTeam.data?.teams?.[0]?.abbreviation
+    }), [awayTeam.data, homeTeam.data]);
+
+    const handleClick = useCallback(() => {
+        if (!gamePk) return;
+        const element = document.getElementById(gamePk);
         if (element) {
             const elementPosition = element.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
             window.scrollTo({
@@ -39,7 +59,9 @@ function ScoreBox({ game, navbarHeight }) {
                 behavior: 'smooth'
             });
         }
-    };
+    }, [gamePk, navbarHeight]);
+
+    const showScores = inningsMessage !== "Suspended";
 
     return (
         <Col onClick={handleClick}>
@@ -47,19 +69,19 @@ function ScoreBox({ game, navbarHeight }) {
                 <table>
                     <tbody>
                     <tr>
-                        <td>{awayTeam.data ? awayTeam.data["teams"][0]["abbreviation"] : <Placeholder.Paragraph/>}</td>
-                        {inningsMessage !== "Suspended" && <td>{game ? game["teams"]["away"]["score"] : <Placeholder.Paragraph/>}</td>}
-                        <td>{(game && data) ? getInningsMessage(game["status"], data) : <Placeholder.Paragraph/>}</td>
+                        <td>{teamAbbreviations.away || <Placeholder.Paragraph/>}</td>
+                        {showScores && <td>{teamScores.away ?? <Placeholder.Paragraph/>}</td>}
+                        <td>{inningsMessage || <Placeholder.Paragraph/>}</td>
                     </tr>
                     <tr>
-                        <td>{homeTeam.data ? homeTeam.data["teams"][0]["abbreviation"] : <Placeholder.Paragraph/>}</td>
-                        {inningsMessage !== "Suspended" && <td>{game ? game["teams"]["home"]["score"] : <Placeholder.Paragraph/>}</td>}
+                        <td>{teamAbbreviations.home || <Placeholder.Paragraph/>}</td>
+                        {showScores && <td>{teamScores.home ?? <Placeholder.Paragraph/>}</td>}
                     </tr>
                     </tbody>
                 </table>
             </Panel>
         </Col>
     );
-}
+};
 
-export default ScoreBox;
+export default React.memo(ScoreBox);

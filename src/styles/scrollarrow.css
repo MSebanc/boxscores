@@ -1,50 +1,88 @@
+/* ===== CSS VARIABLES ===== */
+:root {
+    /* Colors */
+    --scroll-btn-primary: #6495ED;
+    --scroll-btn-primary-hover: #4169E1;
+    --scroll-btn-text: white;
+    --scroll-btn-shadow-color: rgba(0, 0, 0, 0.1);
+
+    /* Positioning */
+    --scroll-btn-bottom: 20px;
+    --scroll-btn-right: 20px;
+
+    /* Dimensions */
+    --scroll-btn-size-desktop: 80px;
+    --scroll-btn-size-mobile: 60px;
+    --scroll-btn-line-height-desktop: 60px;
+    --scroll-btn-line-height-mobile: 40px;
+
+    /* Effects */
+    --scroll-btn-border-radius: 50%;
+    --scroll-btn-shadow: 0 2px 4px var(--scroll-btn-shadow-color);
+    --scroll-btn-transition: background-color 0.3s ease;
+
+    /* Animation */
+    --bounce-duration: 2s;
+    --bounce-iteration: infinite;
+    --bounce-translate-large: -10px;
+    --bounce-translate-small: -5px;
+
+    /* Breakpoints */
+    --mobile-breakpoint: 600px;
+}
+
+/* ===== SCROLL TO TOP BUTTON ===== */
 .scroll-to-top {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 80px;
-    height: 80px;
-    background-color: #6495ED;
-    color: white;
-    border-radius: 50%;
+    bottom: var(--scroll-btn-bottom);
+    right: var(--scroll-btn-right);
+    width: var(--scroll-btn-size-desktop);
+    height: var(--scroll-btn-size-desktop);
+    background-color: var(--scroll-btn-primary);
+    color: var(--scroll-btn-text);
+    border-radius: var(--scroll-btn-border-radius);
     text-align: center;
-    line-height: 60px;
+    line-height: var(--scroll-btn-line-height-desktop);
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
+    box-shadow: var(--scroll-btn-shadow);
+    transition: var(--scroll-btn-transition);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* ===== HOVER STATES ===== */
 .scroll-to-top:hover {
-    background-color: #4169E1;
+    background-color: var(--scroll-btn-primary-hover);
 }
 
+.scroll-to-top:hover .fa-arrow-up {
+    animation: bounce var(--bounce-duration) var(--bounce-iteration);
+}
+
+/* ===== VISIBILITY STATES ===== */
+.scroll-to-top.visible {
+    opacity: 1;
+}
+
+/* ===== ANIMATIONS ===== */
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
         transform: translateY(0);
     }
     40% {
-        transform: translateY(-10px);
+        transform: translateY(var(--bounce-translate-large));
     }
     60% {
-        transform: translateY(-5px);
+        transform: translateY(var(--bounce-translate-small));
     }
 }
 
-.scroll-to-top.visible {
-    opacity: 1;
-}
-
-.scroll-to-top:hover .fa-arrow-up {
-    animation: bounce 2s infinite;
-}
-
+/* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 600px) {
     .scroll-to-top {
-        width: 60px;
-        height: 60px;
-        line-height: 40px;
+        width: var(--scroll-btn-size-mobile);
+        height: var(--scroll-btn-size-mobile);
+        line-height: var(--scroll-btn-line-height-mobile);
     }
 }

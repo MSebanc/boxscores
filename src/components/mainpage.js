@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSchedule } from '../utils/apicalls';
-import {isValidDate, getDateStringToday} from '../utils/dateValidator';
+import { isValidDate, getDateStringToday } from '../utils/dateValidator';
 import NavBar from './navbar';
 import Title from './title';
 import Scoreboard from './scoreboard';
@@ -13,6 +13,7 @@ function MainPage() {
     const params = useParams();
 
     const [date, setDate] = useState(params.date);
+    const [navbarHeight, setNavbarHeight] = useState(0);
 
     const navbarRef = useRef(null);
     const mainPageRef = useRef(null);
@@ -29,38 +30,31 @@ function MainPage() {
         }
     }, [params.date, navigate]);
 
-    const updatePaddingTop = () => {
+    const updatePaddingTop = useCallback(() => {
         if (navbarRef.current && mainPageRef.current) {
-            const navbarHeight = navbarRef.current.offsetHeight;
-            mainPageRef.current.style.paddingTop = `${navbarHeight + 5}px`;
+            const height = navbarRef.current.offsetHeight;
+            setNavbarHeight(height);
+            mainPageRef.current.style.paddingTop = `${height + 5}px`;
         }
-    };
+    }, []);
 
     useEffect(() => {
         updatePaddingTop();
         window.addEventListener('resize', updatePaddingTop);
         return () => window.removeEventListener('resize', updatePaddingTop);
-    }, []);
+    }, [updatePaddingTop]);
 
     const { data, loading, error } = useSchedule(date);
 
-    useEffect(() => {
-        if (data) {
-            console.log(data);
-        }
-        if (loading) {
-            console.log('loading');
-        }
-        if (error) {
-            console.log(error);
-        }
-    }, [data, loading, error]);
+    if (error) {
+        return <div>Error loading schedule data</div>;
+    }
 
     return (
         <div ref={mainPageRef}>
             <NavBar date={date} ref={navbarRef} />
             <Title date={date} />
-            <Scoreboard data={data} loading={loading} navbarHeight={navbarRef.current ? navbarRef.current.offsetHeight : 0} />
+            <Scoreboard data={data} loading={loading} navbarHeight={navbarHeight} />
             <BoxScores data={data} loading={loading} />
             <ScrollArrow />
         </div>

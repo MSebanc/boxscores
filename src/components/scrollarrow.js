@@ -9,18 +9,34 @@ const ScrollArrow = () => {
         setIsVisible(window.pageYOffset > 300);
     }, []);
 
+    const scrollToTop = useCallback(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     useEffect(() => {
-        window.addEventListener('scroll', toggleVisibility);
+        // Initial check in case page is already scrolled
+        toggleVisibility();
+
+        window.addEventListener('scroll', toggleVisibility, { passive: true });
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, [toggleVisibility]);
 
+    if (!isVisible) {
+        return null;
+    }
+
     return (
-        isVisible && (
-            <div className={`scroll-to-top ${isVisible ? 'visible' : ''}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Scroll to top">
-                <FaArrowUp size={40} />
-            </div>
-        )
+        <div
+            className="scroll-to-top visible"
+            onClick={scrollToTop}
+            onKeyDown={(e) => e.key === 'Enter' && scrollToTop()}
+            role="button"
+            tabIndex={0}
+            aria-label="Scroll to top"
+        >
+            <FaArrowUp size={40} />
+        </div>
     );
 };
 
-export default ScrollArrow;
+export default React.memo(ScrollArrow);
