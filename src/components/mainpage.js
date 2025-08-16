@@ -12,7 +12,14 @@ function MainPage() {
     const navigate = useNavigate();
     const params = useParams();
 
-    const [date, setDate] = useState(params.date);
+    // Initialize with today's date if params.date is undefined
+    const [date, setDate] = useState(() => {
+        if (!params.date || !isValidDate(params.date)) {
+            return getDateStringToday();
+        }
+        return params.date;
+    });
+
     const [navbarHeight, setNavbarHeight] = useState(0);
 
     const navbarRef = useRef(null);

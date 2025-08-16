@@ -9,21 +9,12 @@ const ROUTER_CONFIG = {
     ]
 };
 
-const createRoute = (route, index) => (
-    <Route
-        key={index}
-        path={route.path}
-        element={<route.component />}
-    />
-);
-
-const renderRoutes = (routes) => routes.map(createRoute);
-
 function App() {
     return (
         <Router basename={ROUTER_CONFIG.basename}>
             <Routes>
-                {renderRoutes(ROUTER_CONFIG.routes)}
+                <Route path="/:date" element={<MainPage />} />
+                <Route path="/" element={<MainPage />} />
             </Routes>
         </Router>
     );
