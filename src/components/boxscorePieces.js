@@ -58,6 +58,19 @@ const BattingInfo = ({ info }) => {
     );
 };
 
+const PlayerNameWithPositions = ({ player, note }) => {
+    const positions = player?.allPositions && player.allPositions.length > 0
+        ? ` ${player.allPositions.map(pos => pos.abbreviation).join('-')}`
+        : '';
+
+    return (
+        <>
+            {note && <span style={{marginLeft: '16px'}}>{note}</span>}
+            <span>{player?.person?.fullName}{positions}</span>
+        </>
+    );
+};
+
 const BatterBoxScore = ({ team }) => {
     const sortedBatters = useMemo(() => {
         if (!team?.batters || !team?.players) return [];
@@ -101,14 +114,7 @@ const BatterBoxScore = ({ team }) => {
                     return (
                         <tr key={batter?.person?.id || index}>
                             <td>
-                                {note ? (
-                                    <>
-                                        <span style={{marginLeft: '16px'}}>{note}</span>
-                                        <span>{batter?.person?.fullName}</span>
-                                    </>
-                                ) : (
-                                    batter?.person?.fullName
-                                )}
+                                <PlayerNameWithPositions player={batter} note={note} />
                             </td>
                             <td>{battingStats?.atBats}</td>
                             <td>{battingStats?.runs}</td>
