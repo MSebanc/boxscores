@@ -120,3 +120,27 @@
         max-height: var(--button-height-mobile-max);
     }
 }
+
+@media (max-width: 320px) {
+    .nav {
+        padding: 3px 5px;
+    }
+
+    .button {
+        padding: 3px 5px;
+        min-width: 60px;
+        max-width: 60px;
+        min-height: 20px;
+        max-height: 30px;
+        font-size: 0.7rem;
+    }
+
+    .date-picker .rs-picker-toggle-default {
+        padding: 3px 5px;
+        min-width: 60px;
+        max-width: 60px;
+        min-height: 20px;
+        max-height: 30px;
+        font-size: 0.7rem;
+    }
+}

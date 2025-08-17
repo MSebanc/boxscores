@@ -185,3 +185,31 @@
         gap: var(--row-gap-mobile);
     }
 }
+
+@media (max-width: 320px) {
+    .scoreboard {
+        margin: 3px 5px;
+        padding: 0;
+    }
+
+    .score-box {
+        width: 90px;
+        height: 70px;
+        padding: 3px;
+        font-size: 0.65rem;
+        margin: 1px auto;
+    }
+
+    .score-box table {
+        border-spacing: 3px 1px;
+    }
+
+    .score-box td {
+        padding: 0;
+        font-size: 0.6em;
+    }
+
+    .row {
+        gap: 3px;
+    }
+}
